@@ -74,15 +74,15 @@
   <div class="main-wrapper d-flex justify-content-center">
     <div class="wrapper-padding col-md-8 text-start">
       <h3>Create an event</h3>
-      <p>Want to host your own event? Easily create a new event by filling out the form below.</p><br>
-      <form class="create-event-form"action="">
+      <p>Want to host your own event? Easily create a new event by filling out the form below.</p>
+      <form class="create-event-form pt-4" action="">
         <div class="pb-4">
-          <label for="eventName">What's the name of your event?</label><br>
-          <input type="text" placeholder="Event Title" class="mb-1" required><br>
+          <label for="eventName">What's the name of your event?</label>
+          <input type="text" placeholder="Event Title" class="mb-1" required>
           <input type="text" placeholder="Event Description" required>
         </div>
         <div class="pb-4">
-          <label for="eventName">When does your event start and end?</label><br>
+          <label for="eventName">When does your event start and end?</label>
           <div class="d-md-flex gap-2">
             <input class="col-md-6 mb-1 mb-md-0" type="date">
             <div class="d-flex gap-2 w-100">
@@ -91,14 +91,14 @@
           </div>
         </div>
         <div class="pb-4">
-          <label for="eventName">Where is it located?</label><br>
+          <label for="eventName">Where is it located?</label>
           <div class="d-flex align-items-center gap-2">
             <span>
-              <input type="radio" id="venue" name="location" value="Venue" aria-hidden="true" hidden>
+              <input type="radio" id="venue" name="location" value="Venue" aria-hidden="true" checked>
               <label for="venue" class="location-radio"><i class="material-symbols-outlined">location_on</i>Venue</label>
             </span>
             <span>
-              <input type="radio" id="onlineEvent" name="online" value="Online Event" hidden>
+              <input type="radio" id="onlineEvent" name="location" value="Online event" hidden>
               <label for="onlineEvent" class="location-radio"><i class="material-symbols-outlined">tv</i>Online event</label>
             </span>
             <span>
@@ -106,8 +106,7 @@
               <label for="tba" class="location-radio"><i class="material-symbols-outlined">calendar_today</i>To be announced</label>
             </span>
           </div>
-          
-          <select id="campus" class="custom-select" required>
+          <select id="campus" class="custom-select w-100" required>
               <option value="0">Select campus</option>
               <option value="1">INTI International University</option>
               <option value="2">INTI International College Subang</option>
@@ -115,21 +114,16 @@
               <option value="4">INTI International College Sabah</option>
           </select><br>
         </div>
-
-          
-          
-          
-          
-          
-          <label for="capacity">What's the capacity for your event?</label><br>
+        <div class="pb-4">
+          <label for="capacity">What's the capacity for your event?</label>
           <div>Event capacity refers to the maximum number of registrants allowed.</div>
-          <input type="text" placeholder="Capacity"><br><br>
-          <div class="gap-3 d-flex justify-content-end">
-            <input class="btn btn-light" type="button" value="Exit">
-            <input class="btn btn-secondary" type="submit" value="Create event">
-          </div>
+          <input class="col-4 mt-2" type="number" min="10" placeholder="Capacity">
+        </div>
+        <div class="gap-3 d-flex justify-content-end">
+          <input class="btn btn-light" type="button" value="Exit">
+          <input class="btn btn-secondary" type="submit" value="Create event">
+        </div>  
       </form>
-      
     </div>
   </div>  
 </body>
