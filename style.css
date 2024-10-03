@@ -110,3 +110,21 @@ input[type="radio"]:checked + .location-radio {
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
+
+.dynamic-input {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ticket page */
+.nav-underline .nav-item .nav-link{
+  color: #000000A6!important;
+}
+.nav-underline .nav-link.active{
+  color: #000!important;
+}
+
+.card-text .text-body-secondary .material-symbols-outlined{
+  font-size: 38px!important;
+}
