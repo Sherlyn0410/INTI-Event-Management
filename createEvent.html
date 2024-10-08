@@ -92,7 +92,7 @@
         </div>
         <div class="pb-4">
           <label for="eventName">Where is it located?</label>
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-block d-md-flex align-items-center gap-2">
             <span>
               <input type="radio" id="venue" name="location" value="Venue" aria-hidden="true" checked>
               <label for="venue" class="location-radio"><i class="material-symbols-outlined">location_on</i>Venue</label>
@@ -106,7 +106,7 @@
               <label for="tba" class="location-radio"><i class="material-symbols-outlined">calendar_today</i>To be announced</label>
             </span>
           </div>
-          <select id="campus" class="custom-select w-100" required>
+          <select id="campus" class="custom-select" required>
               <option value="0">Select campus</option>
               <option value="1">INTI International University</option>
               <option value="2">INTI International College Subang</option>
@@ -117,7 +117,7 @@
         <div class="pb-4">
           <label for="capacity">What's the capacity for your event?</label>
           <div>Event capacity refers to the maximum number of registrants allowed.</div>
-          <input class="col-4 mt-2" type="number" min="10" placeholder="Capacity" required>
+          <input class="col-md-4 mt-2" type="number" min="10" placeholder="Capacity" required>
         </div>
         <div class="gap-3 d-flex justify-content-end">
           <input class="btn btn-md btn-light" type="button" value="Exit">
