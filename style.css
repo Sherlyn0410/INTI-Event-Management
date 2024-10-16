@@ -1,41 +1,43 @@
 /* Navbar */
-.navbar{
-  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
+.navbar {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
-.dropdown-item.active, .dropdown-item:active{
-  background:#6c757d!important;
+.dropdown-item.active,
+.dropdown-item:active {
+  background: #6c757d !important;
 }
 
-.main-wrapper{
+.main-wrapper {
   position: relative;
   padding: 0 1.5625rem 5.25rem;
   background: #f2f4f8;
 }
 
-.wrapper-padding{
+.wrapper-padding {
   padding-top: 5.5rem;
 }
 
-.container-fluid{
-  padding-top: 2rem;
-}
-
-.card-text{
+.card-text {
   margin-bottom: 1rem;
 }
 
-.material-symbols-outlined{
+.material-symbols-outlined {
   margin-right: 0.25rem;
 }
 
-.dropdown-menu-noti{
+.dropdown-menu-noti {
   left: auto !important;
   right: 0;
   width: 15.75rem;
 }
 
-input[type=search], [type=text], [type=date], [type=time], [type=number]{
+input[type="search"],
+[type="text"],
+[type="date"],
+[type="time"],
+[type="number"],
+[type="password"] {
   width: 100%;
   padding: 12px 16px !important;
   box-sizing: border-box;
@@ -46,30 +48,35 @@ input[type=search], [type=text], [type=date], [type=time], [type=number]{
   outline: none;
 }
 
-input[type=search]:focus, [type=text]:focus, [type=date]:focus, [type=time]:focus, [type=number]:focus{
+input[type="search"]:focus,
+[type="text"]:focus,
+[type="date"]:focus,
+[type="time"]:focus,
+[type="number"]:focus,
+[type="password"]:focus {
   border: 1px solid #555;
 }
 
 input[type="radio"] {
-    display: none;
+  display: none;
 }
 
-.location-radio{
+.location-radio {
   align-items: center;
-  background-color: #CDD1D6;
-  color:#000;
+  background-color: #cdd1d6;
+  color: #000;
   border-radius: 50px;
   cursor: pointer;
   display: flex;
   flex-direction: row;
   gap: 3px;
   padding: 6px 12px 6px 12px;
-  font-size: 1rem!important;
-  font-weight: 400!important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
 }
 
-.location-radio:hover{
-  background-color: #BEC4C9;
+.location-radio:hover {
+  background-color: #bec4c9;
   color: #000;
 }
 
@@ -78,8 +85,8 @@ input[type="radio"]:checked + .location-radio {
   color: #fff;
 }
 
-.location-radio .material-symbols-outlined{
-  font-size: 20px!important;
+.location-radio .material-symbols-outlined {
+  font-size: 20px !important;
 }
 
 .custom-select {
@@ -87,13 +94,13 @@ input[type="radio"]:checked + .location-radio {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: var(--bs-form-select-bg-img),var(--bs-form-select-bg-icon,none);
+  background-image: var(--bs-form-select-bg-img), var(--bs-form-select-bg-icon, none);
   background-repeat: no-repeat;
-  background-position: right .75rem center;
+  background-position: right 0.75rem center;
   background-size: 16px 12px;
-  padding: .75rem 2.25rem .75rem 1rem;
+  padding: 0.75rem 2.25rem 0.75rem 1rem;
   border: 1px solid #ccc;
-  border-radius: 12px ;
+  border-radius: 12px;
   -webkit-transition: 0.3s;
   transition: 0.3s;
   outline: none;
@@ -104,15 +111,15 @@ input[type="radio"]:checked + .location-radio {
   border: 1px solid #555;
 }
 
-.btn-radius{
+.btn-radius {
   border-radius: 12px !important;
 }
 
-.content{
+.content {
   padding-top: 1rem;
 }
 
-.create-event-form label{
+.create-event-form label {
   font-size: 1.25rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
@@ -125,42 +132,78 @@ input[type="radio"]:checked + .location-radio {
 }
 
 /* Ticket page */
-.nav-underline .nav-item .nav-link{
-  color: #000000A6!important;
+.nav-underline .nav-item .nav-link {
+  color: #000000a6 !important;
 }
-.nav-underline .nav-link.active{
-  color: #000!important;
+.nav-underline .nav-link.active {
+  color: #000 !important;
 }
 
-.card-text .text-body-secondary .material-symbols-outlined{
-  font-size: 38px!important;
+.card-text .text-body-secondary .material-symbols-outlined {
+  font-size: 38px !important;
 }
 
 /* Manage event page */
-.btn-create{
+.btn-create {
   padding: 12px 16px !important;
   border-radius: 12px !important;
 }
 
-.text-success, .text-danger{
+.text-success,
+.text-danger {
   font-weight: 500;
 }
 
 /* Profile page */
-.profile-form label{
+.profile-form label {
   font-weight: 500;
   margin-bottom: 0.25rem;
 }
 
-.profile-pic{
+.profile-pic {
   margin-right: 0.5rem;
-  height:250px;
-  width:250px;
-  border:#ccc 1px solid;
+  height: 250px;
+  width: 250px;
+  border: #ccc 1px solid;
   border-radius: 50%;
 }
 
 /* file-padding */
-.input-group .form-control{
+.input-group .form-control {
   line-height: 2 !important;
+}
+
+/* Login page */
+.login-body {
+  background: url('/INTIEventManagement/img/loginbg.png') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  opacity: 0.8;
+}
+
+.login-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 25%);
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 400px;
+}
+
+.login-form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-form-container input,
+.login-form-container button {
+  margin-bottom: 10px;
+}
+
+.login-form-container .cancelbtn {
+  background-color: #f44336;
+  color: white;
 }
