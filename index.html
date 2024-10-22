@@ -10,67 +10,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>INTI Event Management</title>
 </head>
-<header>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light px-2 fixed-top">
-    <div id="navbarNav" class="collapse navbar-collapse justify-content-between">
-      <a class="navbar-brand" href="index.html">
-        <img src="/INTIEventManagement/img/INTIlogo.png" width="206" height="44" class="d-inline-block align-text-top" alt="INTILogo">
-      </a>
-      <div>
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link active d-flex" href="index.html"><i class="material-symbols-outlined">home</i>Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link d-flex" href="eventListing.html"><i class="material-symbols-outlined">search</i>Browse events</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link d-flex" href="createEvent.html"><i class="material-symbols-outlined">add</i>Create an event</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link d-flex" href="ticket.html"><i class="material-symbols-outlined">confirmation_number</i>Tickets</a>
-          </li>
-        </ul>
-      </div>
-      <div>
-        <ul class="navbar-nav">
-          <li class="nav-item dropdown">
-            <a class="nav-link d-flex align-items-center" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="material-symbols-outlined">notifications</i>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-noti" aria-labelledby="navbarDropdownMenuLink">
-              <div>
-                <h6 class="px-3">Notifications</h6>
-                <hr class="m-0">
-                <div class="px-3 py-2 d-flex bg-light">
-                  <span class="material-symbols-outlined">campaign</span>
-                  <span>Update: The date for antidrug campaign have changed to 28 Oct 2024</span>
-                </div>
-              </div>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <div class="d-flex align-items-center">
-                <i class="material-symbols-outlined rounded-pill">person</i>
-                <span class="dropdown-toggle">Sherlyn Kuan Sin Ling</span>
-              </div>
-              
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
-              <li><a class="dropdown-item" href="manageEvent.html">Manage event</a></li>
-              <li><a class="dropdown-item" href="ticket.html">Ticket</a></li>
-              <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="login.html">Log out</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-</header>
 <body>
+  <div id="navbar-placeholder"></div>
   <div class="main-wrapper">
     <div class="wrapper-padding">
       <div id="carouselExampleIndicators" class="carousel slide">
@@ -99,28 +40,63 @@
           <span class="visually-hidden">Next</span>
         </button>
       </div>
-      <div class="container-fluid">
+      <div class="container-fluid pt-4">
         <h3>Upcoming Events</h3>
-        <div class="row row-cols-1 row-cols-md-4 g-4">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
           <div class="col">
-            <div>
-                <section>
-                    <div class="card">
-                        <a href="#">
-                            <img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" alt="eventImage" class="card-img-top">
-                        </a>
-                        <section>
-                          <div class="card-body">
-                              <h5 class="card-title">Counselling Awareness Month 2024</h5>
-                              <p class="card-text">
-                                <small>Mon, 2 Sep 2024 • 10.00 AM<br>
-                                  <span class="text-muted">INTI International College Penang</span></small>
-                              </p>
-                              <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>87 registered</span>
-                          </div>
-                        </section>
+            <div type="button" data-bs-toggle="modal" data-bs-target="#registerModal">
+              <div class="card">
+                  <img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" alt="eventImage" class="card-img-top">
+                  <section>
+                    <div class="card-body">
+                        <h5 class="card-title">Counselling Awareness Month 2024</h5>
+                        <p class="card-text">
+                          <small>Mon, 2 Sep 2024 • 10.00 AM<br>
+                            <span class="text-muted">INTI International College Penang</span></small>
+                        </p>
+                        <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>87 registered</span>
                     </div>
-                </section>
+                  </section>
+              </div>
+            </div>
+            <div class="modal" id="registerModal">
+              <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+            
+                  <!-- Modal Header -->
+                  <div class="modal-header">
+                    <h4 class="modal-title">Summary</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+            
+                  <!-- Modal body -->
+                  <div class="modal-body">
+                    <img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" alt="eventImage" class="img-fluid rounded">
+                    <h2>Counselling Awareness Month 2024</h2>
+                    <form class="event-info pt-2">
+                      <div class="pb-4">
+                        <h3>Date and Time</h3>
+                        <span>Mon, 2 Sep 2024 • 10.00 AM</span>
+                      </div>
+                      <div class="pb-4">
+                        <h3>Location</h3>
+                        <span>INTI International College Penang</span>
+                      </div>
+                      <div class="pb-4">
+                        <h3>About this event</h3>
+                        <span>INTI International College Penang</span>
+                      </div>
+                    </form>
+                  </div>
+            
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-secondary">Register</button>
+                  </div>
+            
+                </div>
+              </div>
             </div>
           </div>
           <div class="col">
@@ -219,3 +195,7 @@
 </html>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="javascript.js"></script>
+<script>
+  loadNavbar('home');
+</script>
