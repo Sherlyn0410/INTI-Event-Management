@@ -82,7 +82,7 @@ function loadNavbar(activePage) {
                     <li><a class="dropdown-item" href="${pages.tickets}">Ticket</a></li>
                     <li><a class="dropdown-item" href="${pages.profile}">Profile</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="${pages.login}">Log out</a></li>
+                    <li><a class="dropdown-item" id="logoutButton" href="#">Log out</a></li>
                     </ul>
                 </li>
                 </ul>
@@ -93,7 +93,23 @@ function loadNavbar(activePage) {
     `;
 }
 
-// Add event listener for the profile picture edit button
-document.getElementById('editButton').addEventListener('click', function() {
-    document.getElementById('inputGroupFile04').click();
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener for the profile picture edit button
+    const editButton = document.getElementById('editButton');
+    if (editButton) {
+        editButton.addEventListener('click', function() {
+            document.getElementById('inputGroupFile04').click();
+        });
+    }
+
+    // Add event listener for the logout button
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to log out?')) {
+                window.location.href = 'login.html';
+            }
+        });
+    }
 });
