@@ -36,29 +36,9 @@
   width: 15.75rem;
 }
 
-input[type="search"],
-[type="text"],
-[type="date"],
-[type="time"],
-[type="number"],
-[type="password"] {
-  width: 100%;
+.form-control, .form-select {
   padding: 12px 16px !important;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-  outline: none;
-}
-
-input[type="search"]:focus,
-[type="text"]:focus,
-[type="date"]:focus,
-[type="time"]:focus,
-[type="number"]:focus,
-[type="password"]:focus {
-  border: 1px solid #555;
+  border-radius: 12px !important;
 }
 
 input[type="radio"] {
@@ -91,28 +71,6 @@ input[type="radio"]:checked + .location-radio {
 
 .location-radio .material-symbols-outlined {
   font-size: 20px !important;
-}
-
-.custom-select {
-  --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: var(--bs-form-select-bg-img), var(--bs-form-select-bg-icon, none);
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 16px 12px;
-  padding: 0.75rem 2.25rem 0.75rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  -webkit-transition: 0.3s;
-  transition: 0.3s;
-  outline: none;
-  width: 100%;
-}
-
-.custom-select:focus {
-  border: 1px solid #555;
 }
 
 .btn-radius {
