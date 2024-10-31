@@ -1,8 +1,8 @@
 function loadNavbar(activePage) {
     const pages = {
-        home: 'index.html',
+        home: 'index.php',
         browse: 'eventListing.html',
-        create: 'createEvent.html',
+        create: 'createEvent.php',
         tickets: 'ticket.html',
         manage: 'manageEvent.html',
         profile: 'profile.html',
@@ -93,6 +93,17 @@ function loadNavbar(activePage) {
     `;
 }
 
+function loadFooter() {
+    const footerHTML = `
+        <footer class="footer py-2">
+            <div class="container text-center">
+                <span>&copy; 2024 INTI Event Management. All rights reserved.</span>
+            </div>
+        </footer>
+    `;
+    document.body.insertAdjacentHTML('beforeend', footerHTML);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Add event listener for the profile picture edit button
     const editButton = document.getElementById('editButton');
@@ -112,4 +123,55 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // Add event listener for the exit button in createEvent.php
+    const exitButton = document.getElementById('exitButton');
+    if (exitButton) {
+        exitButton.addEventListener('click', function() {
+            var form = document.getElementById('createEventForm');
+            var formElements = form.elements;
+            var hasValue = false;
+
+            // Check if any form field has a value
+            for (var i = 0; i < formElements.length; i++) {
+                if (formElements[i].type !== 'button' && formElements[i].value.trim() !== '' && formElements[i].value !== '') {
+                    hasValue = true;
+                    break;
+                }
+            }
+
+            if (hasValue) {
+                var confirmExit = confirm('Do you really want to exit?');
+                if (confirmExit) {
+                    // Clear form fields
+                    form.reset();
+                    // Redirect to index.php
+                    window.location.href = 'index.php';
+                }
+            } else {
+                // Redirect to index.php
+                window.location.href = 'index.php';
+            }
+        });
+    }
+
+    // Set minimum date for startdate input
+    const today = new Date();
+    today.setDate(today.getDate() + 1); // Add one day to today's date
+    const tomorrow = today.toISOString().split('T')[0];
+    const startDateInput = document.getElementById('startdate');
+    if (startDateInput) {
+        startDateInput.setAttribute('min', tomorrow);
+    }
+
+    // Set 5-minute step for time inputs
+    const timeInputs = document.querySelectorAll('input[type="time"]');
+    timeInputs.forEach(input => {
+        input.setAttribute('step', '300'); // 300 seconds = 5 minutes
+    });
+
+    // Load footer
+    loadFooter();
 });
+
+
