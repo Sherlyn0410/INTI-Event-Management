@@ -3,15 +3,18 @@
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
-.footer {
-  background: #E21A22;
-  color: #fff;
-}
 .dropdown-item.active,
 .dropdown-item:active {
   background: #6c757d !important;
 }
 
+/* footer */
+.footer {
+  background: #E21A22;
+  color: #fff;
+}
+
+/* page content */
 .main-wrapper {
   position: relative;
   padding: 0 1.5625rem 5.25rem;
@@ -128,11 +131,6 @@ input[type="radio"]:checked + .location-radio {
   width: 250px;
   border: #ccc 1px solid;
   border-radius: 50%;
-}
-
-/* file-padding */
-.input-group .form-control {
-  line-height: 2 !important;
 }
 
 /* Login page */

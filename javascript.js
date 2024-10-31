@@ -164,12 +164,6 @@ document.addEventListener('DOMContentLoaded', function() {
         startDateInput.setAttribute('min', tomorrow);
     }
 
-    // Set 5-minute step for time inputs
-    const timeInputs = document.querySelectorAll('input[type="time"]');
-    timeInputs.forEach(input => {
-        input.setAttribute('step', '300'); // 300 seconds = 5 minutes
-    });
-
     // Load footer
     loadFooter();
 });
