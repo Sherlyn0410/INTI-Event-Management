@@ -21,7 +21,6 @@ $event = new Event($db);
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Set event property values
     $event->name = $_POST['name'];
-    $event->image = $_FILES['image']['name'];
     $event->description = $_POST['description'];
     $event->startdatetime = $_POST['startdate'] . ' ' . $_POST['starttime'];
     $event->endtime = $_POST['startdate'] . ' ' . $_POST['endtime'];
@@ -29,6 +28,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $event->capacity = $_POST['capacity'];
     $event->status = "Published";
     $event->user_id = $_SESSION['user_id'];
+
+    $event->image = $_FILES['image']['name'];
+    $tmp = explode('.', $event->image);
+    $newFileName = round(microtime(true)) . '.' . end($tmp);
+    $uploadPath = 'img/' . $newFileName;
+    move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath);
 
     // Create the event
     if ($event->create()) {
@@ -57,10 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>INTI Event Management</title>
 </head>
 <body>
-  <script>
-    // Pass the PHP session variable to JavaScript
-    const userName = '<?php echo isset($_SESSION["name"]) ? $_SESSION["name"] : ""; ?>';
-  </script>
+  <?php include 'session_script.php'; ?>
   <div id="navbar-placeholder"></div>
   <div class="main-wrapper">
     <div class="wrapper-padding">

@@ -40,5 +40,33 @@ class Database{
             return false;
         }
     }
+
+    // get user profile
+    public function getUserProfile($user_id) {
+        $query = "
+            SELECT user.*, campus.name AS campus_name
+            FROM user
+            LEFT JOIN campus ON user.campus_id = campus.id
+            WHERE user.id = :id
+        ";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $user_id);
+        $stmt->execute();
+
+        if($stmt->rowCount() == 1) {
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            return false;
+        }
+    }
+
+    // update user profile image
+    public function updateUserProfileImage($user_id, $image) {
+        $query = "UPDATE user SET profilePic = :image WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':image', $image);
+        $stmt->bindParam(':user_id', $user_id);
+        return $stmt->execute();
+    }
 }
 ?>

@@ -23,17 +23,29 @@ $data = json_decode(file_get_contents("php://input"));
 // make sure data is not empty
 if(
     !empty($data->name) &&
-    !empty($data->image) &&
     !empty($data->description) &&
     !empty($data->startdatetime) &&
     !empty($data->endtime) &&
     !empty($data->campus_id) &&
-    !empty($data->capacity)
+    !empty($data->capacity) &&
+    !empty($_FILES['image']['name'])
 ){
-  
+    // Handle image upload
+    $event->image = $_FILES['image']['name'];
+    $tmp = explode('.', $event->image);
+    $newFileName = round(microtime(true)) . '.' . end($tmp);
+    $uploadPath = '../img/' . $newFileName;
+    if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
+        $event->image = $newFileName;
+    } else {
+        // set response code - 503 service unavailable
+        http_response_code(503);
+        echo json_encode(array("message" => "Unable to upload image."));
+        exit();
+    }
+
     // set event property values
     $event->name = $data->name;
-    $event->image = $data->image;
     $event->description = $data->description;
     $event->startdatetime = $data->startdatetime;
     $event->endtime = $data->endtime;

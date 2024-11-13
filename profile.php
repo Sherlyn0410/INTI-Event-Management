@@ -1,5 +1,28 @@
 <?php
 session_start();
+require_once 'config/database.php';
+
+$database = new Database();
+$db = $database->getConnection();
+
+$user_id = $_SESSION['user_id'];
+$user_profile = $database->getUserProfile($user_id);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['profilePic'])) {
+    $image = $_FILES['profilePic']['name'];
+    $tmp = explode('.', $image);
+    $newFileName = round(microtime(true)) . '.' . end($tmp);
+    $uploadPath = 'img/' . $newFileName;
+    if (move_uploaded_file($_FILES['profilePic']['tmp_name'], $uploadPath)) {
+        // Update user profile image in the database
+        $database->updateUserProfileImage($user_id, $newFileName);
+        // Refresh the user profile data
+        $user_profile = $database->getUserProfile($user_id);
+        echo "<script>alert('Profile image updated successfully.');</script>";
+    } else {
+        echo "<script>alert('Unable to upload image.');</script>";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,10 +37,7 @@ session_start();
     <title>INTI Event Management</title>
 </head>
 <body>
-  <script>
-    // Pass the PHP session variable to JavaScript
-    const userName = '<?php echo isset($_SESSION["name"]) ? $_SESSION["name"] : ""; ?>';
-  </script>
+  <?php include 'session_script.php'; ?>
   <div id="navbar-placeholder"></div>
   <div class="main-wrapper">
       <div class="wrapper-padding">
@@ -25,34 +45,39 @@ session_start();
           <div class="row align-items-center">
             <div class="col-12 col-md-4 text-center d-flex justify-content-center position-relative">
               <div>
-                <img class="profile-pic mb-3" src="/INTIEventManagement/img/profile.jpg" alt="profilePic">
-                <div class="input-group text-center">
-                  <input type="file" class="form-control d-none" id="inputGroupFile04" accept=".jpg, .jpeg, .png" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
-                  <button class="btn btn-light border position-absolute bottom-0 end-0 rounded d-flex" type="button" id="editButton"><i class="material-symbols-outlined">edit</i>Edit</button>
-                </div>
+                <?php
+                $profileImage = !empty($user_profile['profilePic']) ? htmlspecialchars($user_profile['profilePic']) : 'default-profile.jpg';
+                ?>
+                <img class="profile-pic mb-3" src="img/<?php echo $profileImage; ?>" alt="profilePic">
+                <form action="profile.php" method="post" enctype="multipart/form-data">
+                  <div class="input-group text-center">
+                    <input type="file" class="form-control d-none" id="profilePic" name="profilePic" accept=".jpg, .jpeg, .png" aria-describedby="inputGroupFileAddon04" aria-label="Upload">
+                    <button class="btn btn-light border position-absolute bottom-0 end-0 rounded d-flex" type="button" id="editButton"><i class="material-symbols-outlined">edit</i>Edit</button>
+                  </div>
+                </form>
               </div>
             </div>
             <div class="col-12 col-md-8 profile-form">
-                <form action="">
+                <form>
                     <div class="pb-2 pb-md-3">
-                        <label for="name">Student ID</label>
-                        <input class="form-control" type="text" value="P22013935" readonly>
+                        <label for="user_id">Student ID</label>
+                        <input class="form-control text-capitalize" type="text" value="<?php echo htmlspecialchars($user_profile['id']); ?>" readonly>
                     </div>
                     <div class="pb-2 pb-md-3">
                         <label for="name">Name</label>
-                        <input type="text" class="text-uppercase form-control" value="sherlyn kuan sin ling" readonly>
+                        <input type="text" class="text-uppercase form-control" value="<?php echo htmlspecialchars($user_profile['name']); ?>" readonly>
                     </div>
                     <div class="pb-2 pb-md-3">
                         <label for="email">Email</label>
-                        <input class="form-control" type="text" value="sherlynkuan01@gmail.com" readonly>
+                        <input class="form-control" type="text" value="<?php echo htmlspecialchars($user_profile['email']); ?>" readonly>
                     </div>
                     <div class="pb-2 pb-md-3">
-                        <label for="email">Mobile No.</label>
-                        <input class="form-control" type="text" value="018-7453028" readonly>
+                        <label for="phoneNo">Phone No.</label>
+                        <input class="form-control" type="text" value="+60 <?php echo htmlspecialchars($user_profile['phoneNo']); ?>" readonly>
                     </div>
                     <div class="pb-2 pb-md-3">
-                        <label for="email">Campus</label>
-                        <input class="form-control" type="text" value="INTI International College Penang" readonly>
+                        <label for="campus">Campus</label>
+                        <input class="form-control" type="text" value="<?php echo htmlspecialchars($user_profile['campus_name']); ?>" readonly>
                     </div>
                 </form>
             </div>
@@ -69,4 +94,12 @@ session_start();
 <script src="javascript.js"></script>
 <script>
   loadNavbar('profile');
+
+  document.getElementById('editButton').addEventListener('click', function() {
+    document.getElementById('profilePic').click();
+  });
+
+  document.getElementById('profilePic').addEventListener('change', function() {
+    this.form.submit();
+  });
 </script>

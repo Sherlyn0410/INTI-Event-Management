@@ -14,10 +14,7 @@ session_start();
   <title>INTI Event Management</title>
 </head>
 <body>
-  <script>
-    // Pass the PHP session variable to JavaScript
-    const userName = '<?php echo isset($_SESSION["name"]) ? $_SESSION["name"] : ""; ?>';
-  </script>
+  <?php include 'session_script.php'; ?>
   <div id="navbar-placeholder"></div>
   <div class="main-wrapper">
     <div class="wrapper-padding">

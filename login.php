@@ -10,6 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $user_id = $_POST['user_id'];
     $password = $_POST['password'];
+    $hash = password_hash($password, PASSWORD_DEFAULT);
 
     if ($database->authenticate($user_id, $password)) {
         header("Location: index.php");
