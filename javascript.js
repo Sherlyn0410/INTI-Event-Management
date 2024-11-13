@@ -1,15 +1,18 @@
 function loadNavbar(activePage) {
     const pages = {
         home: 'index.php',
-        browse: 'eventListing.html',
+        browse: 'eventListing.php',
         create: 'createEvent.php',
-        tickets: 'ticket.html',
-        manage: 'manageEvent.html',
-        profile: 'profile.html',
-        login: 'login.html'
+        tickets: 'ticket.php',
+        manage: 'manageEvent.php',
+        profile: 'profile.php',
+        login: 'login.php'
     };
 
     const isActive = (page) => activePage === page ? 'active' : '';
+
+    // Use the passed variable
+    const name = userName;
 
     document.getElementById('navbar-placeholder').innerHTML = `
       <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
@@ -74,7 +77,7 @@ function loadNavbar(activePage) {
                     <a class="nav-link ${isActive('profile')}" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="d-flex align-items-center">
                         <i class="material-symbols-outlined rounded-pill">person</i>
-                        <span class="dropdown-toggle">Sherlyn Kuan Sin Ling</span>
+                        <span class="dropdown-toggle text-capitalize">${name}</span>
                     </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink" id="profileDropdownMenu">
@@ -82,7 +85,7 @@ function loadNavbar(activePage) {
                     <li><a class="dropdown-item" href="${pages.tickets}">Ticket</a></li>
                     <li><a class="dropdown-item" href="${pages.profile}">Profile</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" id="logoutButton" href="#">Log out</a></li>
+                    <li><a class="dropdown-item" id="logoutButton">Log out</a></li>
                     </ul>
                 </li>
                 </ul>
@@ -119,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
         logoutButton.addEventListener('click', function(event) {
             event.preventDefault();
             if (confirm('Are you sure you want to log out?')) {
-                window.location.href = 'login.html';
+                window.location.href = 'login.php';
             }
         });
     }
@@ -167,5 +170,3 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load footer
     loadFooter();
 });
-
-

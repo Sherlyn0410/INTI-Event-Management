@@ -16,6 +16,8 @@ class Event{
     public $campus_name;
     public $capacity;
     public $status;
+    public $user_id;
+    public $user_name;
   
     // constructor with $db as database connection
     public function __construct($db){
@@ -27,12 +29,15 @@ class Event{
     
         // select all query
         $query = "SELECT
-                    c.name as campus_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status
+                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
                 FROM
                     " . $this->table_name . " e
                     LEFT JOIN
                         campus c
                             ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
                 ORDER BY
                     e.startdatetime ASC";
     
@@ -52,7 +57,7 @@ class Event{
         $query = "INSERT INTO
                     " . $this->table_name . "
                 SET
-                    name=:name, image=:image, description=:description, startdatetime=:startdatetime, endtime=:endtime, campus_id=:campus_id, capacity=:capacity, status=:status";
+                    name=:name, image=:image, description=:description, startdatetime=:startdatetime, endtime=:endtime, campus_id=:campus_id, capacity=:capacity, status=:status, user_id=:user_id";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -66,6 +71,7 @@ class Event{
         $this->campus_id=htmlspecialchars(strip_tags($this->campus_id));
         $this->capacity=htmlspecialchars(strip_tags($this->capacity));
         $this->status=htmlspecialchars(strip_tags($this->status));
+        $this->user_id=htmlspecialchars(strip_tags($this->user_id));
     
         // bind values
         $stmt->bindParam(":name", $this->name);
@@ -76,6 +82,7 @@ class Event{
         $stmt->bindParam(":campus_id", $this->campus_id);
         $stmt->bindParam(":capacity", $this->capacity);
         $stmt->bindParam(":status", $this->status);
+        $stmt->bindParam(":user_id", $this->user_id);
     
         // execute query
         if($stmt->execute()){
@@ -90,12 +97,15 @@ class Event{
     
         // query to read single record
         $query = "SELECT
-                    c.name as campus_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status
+                    c.name as campus_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id, u.name as user_name
                 FROM
                     " . $this->table_name . " e
                     LEFT JOIN
                         campus c
                             ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
                 WHERE
                     e.id = ?
                 LIMIT
@@ -123,6 +133,8 @@ class Event{
         $this->campus_name = $row['campus_name'];
         $this->capacity = $row['capacity'];
         $this->status = $row['status'];
+        $this->user_id = $row['user_id'];
+        $this->user_name = $row['user_name'];
     }
 
     // update the event
@@ -139,7 +151,8 @@ class Event{
                     endtime = :endtime,
                     campus_id = :campus_id,
                     capacity = :capacity,
-                    status = :status
+                    status = :status,
+                    user_id = :user_id
                 WHERE
                     id = :id";
     
@@ -156,6 +169,7 @@ class Event{
         $this->capacity=htmlspecialchars(strip_tags($this->capacity));
         $this->status=htmlspecialchars(strip_tags($this->status));
         $this->id=htmlspecialchars(strip_tags($this->id));
+        $this->user_id=htmlspecialchars(strip_tags($this->user_id));
 
         // explicitly set status to "Published"
         $this->status = "Published";
@@ -170,6 +184,7 @@ class Event{
         $stmt->bindParam(':capacity', $this->capacity);
         $stmt->bindParam(':status', $this->status);
         $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(':user_id', $this->user_id);
     
         // execute the query
         if($stmt->execute()){
@@ -205,15 +220,17 @@ class Event{
     
     // search events
     function search($name, $campus){
-    
         // select all query with search condition
         $query = "SELECT
-                    c.name as campus_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status
+                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
                 FROM
                     " . $this->table_name . " e
                     LEFT JOIN
                         campus c
                             ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
                 WHERE
                     e.name LIKE ? AND c.name LIKE ?
                 ORDER BY
@@ -243,12 +260,15 @@ class Event{
     
         // select query
         $query = "SELECT
-                    c.name as campus_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status
+                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
                 FROM
                     " . $this->table_name . " e
                     LEFT JOIN
                         campus c
                             ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
                 ORDER BY e.startdatetime ASC
                 LIMIT ?, ?";
     
