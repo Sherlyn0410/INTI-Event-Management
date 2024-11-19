@@ -1,5 +1,19 @@
 <?php
 session_start();
+require_once 'config/database.php';
+require_once 'objects/event.php';
+
+$database = new Database();
+$db = $database->getConnection();
+$event = new Event($db);
+
+// Query the latest 3 events for the carousel
+$stmt = $event->readLatest(3);
+$latestEvents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Query 4 random events for the upcoming events section
+$stmt = $event->readRandom(4);
+$randomEvents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,22 +32,13 @@ session_start();
   <div id="navbar-placeholder"></div>
   <div class="main-wrapper">
     <div class="wrapper-padding">
-      <div id="carouselExampleIndicators" class="carousel slide">
-        <div class="carousel-indicators">
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-          <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-        </div>
+      <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img src="/INTIEventManagement/img/Anti-DrugCampaign.jpg" class="d-block w-100" alt="Anti-DrugCampaign">
-          </div>
-          <div class="carousel-item">
-            <img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" class="d-block w-100" alt="CounsellingAwareness">
-          </div>
-          <div class="carousel-item">
-            <img src="/INTIEventManagement/img/FunGamesforHappMinds.jpg" class="d-block w-100" alt="FunGamesforHappMinds">
-          </div>
+          <?php foreach ($latestEvents as $index => $event): ?>
+            <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
+              <img src="img/<?php echo htmlspecialchars($event['image']); ?>" class="w-100" alt="<?php echo htmlspecialchars($event['name']); ?>">
+            </div>
+          <?php endforeach; ?>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -47,154 +52,31 @@ session_start();
       <div class="container-fluid pt-4">
         <h3>Upcoming Events</h3>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-          <div class="col">
-            <div type="button" data-bs-toggle="modal" data-bs-target="#registerModal">
+          <?php foreach ($randomEvents as $event): ?>
+          <div class="event col">
+            <a href="eventListing.php?id=<?php echo $event['id']; ?>" class="text-decoration-none">
               <div class="card">
-                  <img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" alt="eventImage" class="card-img-top">
-                  <section>
-                    <div class="card-body">
-                        <h5 class="card-title">Counselling Awareness Month 2024</h5>
-                        <p class="card-text">
-                          <small>Mon, 2 Sep 2024 • 10.00 AM<br>
-                            <span class="text-muted">INTI International College Penang</span></small>
-                        </p>
-                        <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>87 registered</span>
-                    </div>
-                  </section>
-              </div>
-            </div>
-            <div class="modal" id="registerModal">
-              <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                <div class="modal-content">
-            
-                  <!-- Modal Header -->
-                  <div class="modal-header">
-                    <h4 class="modal-title">Summary</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <img src="img/<?php echo htmlspecialchars($event['image']); ?>" alt="eventImage" class="card-img-top">
+                <section>
+                  <div class="card-body">
+                    <h5 class="card-title"><?php echo htmlspecialchars($event['name']); ?></h5>
+                    <p class="card-text">
+                      <small><?php echo date('D, d M Y • h.i A', strtotime($event['startdatetime'])); ?><br>
+                        <span class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></span></small>
+                    </p>
+                    <span class="d-flex"><small class="material-symbols-outlined me-1">person</small><?php echo htmlspecialchars($event['capacity']); ?> registered</span>
                   </div>
-            
-                  <!-- Modal body -->
-                  <div class="modal-body">
-                    <img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" alt="eventImage" class="img-fluid rounded">
-                    <h2>Counselling Awareness Month 2024</h2>
-                    <form class="event-info pt-2">
-                      <div class="pb-4">
-                        <h3>Date and Time</h3>
-                        <span>Mon, 2 Sep 2024 • 10.00 AM</span>
-                      </div>
-                      <div class="pb-4">
-                        <h3>Location</h3>
-                        <span>INTI International College Penang</span>
-                      </div>
-                      <div class="pb-4">
-                        <h3>About this event</h3>
-                        <span>INTI International College Penang</span>
-                      </div>
-                    </form>
-                  </div>
-            
-                  <!-- Modal footer -->
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-secondary">Register</button>
-                  </div>
-            
-                </div>
+                </section>
               </div>
-            </div>
+            </a>
           </div>
-          <div class="col">
-              <div>
-                  <section>
-                    <div class="card">
-                      <a href="#">
-                          <img src="/INTIEventManagement/img/Anti-DrugCampaign.jpg" alt="eventImage" class="card-img-top">
-                      </a>
-                      <section>
-                        <div class="card-body">
-                            <h5 class="card-title">Anti-Drug Campaign</h5>
-                            <p class="card-text">
-                              <small>Sun, 22 Oct 2024 • 12.00 PM<br>
-                                <span class="text-muted">INTI International College Penang</span></small>
-                            </p>
-                            <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>60 registered</span>
-                        </div>
-                      </section>
-                    </div>
-                  </section>
-              </div>
-          </div>
-          <div class="col">
-              <div>
-                  <section>
-                    <div class="card">
-                      <a href="#">
-                          <img src="/INTIEventManagement/img/Accounting&Finance.jpg" alt="eventImage" class="card-img-top">
-                      </a>
-                      <section>
-                        <div class="card-body">
-                            <h5 class="card-title">Accounting & Finance Week</h5>
-                            <p class="card-text">
-                              <small>Tue, 26 Oct 2024 • 12.00 PM<br>
-                                <span class="text-muted">INTI International College Subang</span></small>
-                            </p>
-                            <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>90 registered</span>
-                        </div>
-                      </section>
-                    </div>
-                  </section>
-              </div>
-          </div>
-          <div class="col">
-              <div>
-                  <section>
-                    <div class="card">
-                      <a href="#">
-                          <img src="/INTIEventManagement/img/InternationalCharityFoodFestival.jpg" alt="eventImage" class="card-img-top">
-                      </a>
-                      <section>
-                        <div class="card-body">
-                            <h5 class="card-title">International Charity</h5>
-                            <p class="card-text">
-                              <small>Sun, 3 Nov 2024 • 2.00 PM<br>
-                                <span class="text-muted">INTI International College Penang</span></small>
-                            </p>
-                            <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>60 registered</span>
-                        </div>
-                      </section>
-                    </div>
-                  </section>
-              </div>
-          </div>
-          <div class="col">
-              <div>
-                  <section>
-                    <div class="card">
-                      <a href="#">
-                          <img src="/INTIEventManagement/img/Anti-DrugCampaign.jpg" alt="eventImage" class="card-img-top">
-                      </a>
-                      <section>
-                        <div class="card-body">
-                            <h5 class="card-title">Anti-Drug Campaign</h5>
-                            <p class="card-text">
-                              <small>Sun, 22 Oct 2024 • 12.00 PM<br>
-                                <span class="text-muted">INTI International College Penang</span></small>
-                            </p>
-                            <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>60 registered</span>
-                        </div>
-                      </section>
-                    </div>
-                  </section>
-              </div>
-          </div>
+          <?php endforeach; ?>
         </div>
-        
       </div>
     </div>
   </div>
 </body>
 </html>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="javascript.js"></script>
 <script>

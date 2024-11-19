@@ -125,6 +125,12 @@ input[type="radio"]:checked + .location-radio {
   white-space: nowrap;
 }
 
+.event .card:hover {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Ticket page */
 .nav-underline .nav-item .nav-link {
   color: #000000a6 !important;
@@ -148,6 +154,10 @@ input[type="radio"]:checked + .location-radio {
   font-weight: 500;
 }
 
+.manage-event .table tbody tr th, .manage-event .table tbody tr td{
+  padding: 1rem;
+}
+
 /* Profile page */
 .profile-form label {
   font-weight: 500;
@@ -161,3 +171,5 @@ input[type="radio"]:checked + .location-radio {
   border: #ccc 1px solid;
   border-radius: 50%;
 }
+
+

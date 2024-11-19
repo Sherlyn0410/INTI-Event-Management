@@ -1,5 +1,23 @@
 <?php
 session_start();
+require_once 'config/database.php';
+require_once 'objects/event.php';
+
+$database = new Database();
+$db = $database->getConnection();
+$event = new Event($db);
+
+// Get search parameters
+$searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
+$searchCampus = isset($_GET['campus']) ? $_GET['campus'] : '';
+
+// Query events with search parameters
+if ($searchKeyword || $searchCampus) {
+    $stmt = $event->search($searchKeyword, $searchCampus);
+} else {
+    $stmt = $event->read();
+}
+$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,132 +36,85 @@ session_start();
   <div id="navbar-placeholder"></div>
   <div class="main-wrapper">
     <div class="wrapper-padding">
-      <div class="d-flex flex-column flex-md-row">
-        <input class="me-md-2 mb-2 mb-md-0 form-control" type="search" placeholder="Search events you are interested here..." aria-label="Search">
-        <select name="Select Campus" class="form-select me-md-2 mb-2 mb-md-0">
-          <option value="1">INTI International University</option>
-          <option value="2">INTI International College Subang</option>
-          <option value="3">INTI International College Penang</option>
-          <option value="4">INTI International College Sabah</option>
-          <option value="0">All Campuses</option>
-        </select>
-        <button class="btn btn-secondary btn-radius" type="submit">Search</button>
-      </div>
+      <form method="GET" action="eventListing.php">
+        <div class="d-flex flex-column flex-md-row">
+          <input class="me-md-2 mb-2 mb-md-0 form-control" type="search" name="search" placeholder="Search events you are interested here..." aria-label="Search" value="<?php echo htmlspecialchars($searchKeyword); ?>">
+          <select name="campus" class="form-select me-md-2 mb-2 mb-md-0">
+            <option value="0">All Campuses</option>
+            <option value="1" <?php if ($searchCampus == '1') echo 'selected'; ?>>INTI International University</option>
+            <option value="2" <?php if ($searchCampus == '2') echo 'selected'; ?>>INTI International College Subang</option>
+            <option value="3" <?php if ($searchCampus == '3') echo 'selected'; ?>>INTI International College Penang</option>
+            <option value="4" <?php if ($searchCampus == '4') echo 'selected'; ?>>INTI International College Sabah</option>
+          </select>
+          <button class="btn btn-secondary btn-radius" type="submit">Search</button>
+        </div>
+      </form>
       <div class="container-fluid pt-4">
         <h3>Events</h3>
-        <div class="row row-cols-1 row-cols-md-4 g-4">
-          <div class="col">
-            <div>
-              <section>
+        <?php if (empty($events)): ?>
+          <p>No events found.</p>
+        <?php else: ?>
+          <div class="row row-cols-1 row-cols-md-4 g-4">
+            <?php foreach ($events as $event): ?>
+            <div class="event col">
+              <div type="button" data-bs-toggle="modal" data-bs-target="#registerModal-<?php echo $event['id']; ?>">
                 <div class="card">
-                  <a href="#">
-                      <img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" alt="eventImage" class="card-img-top">
-                  </a>
-                  <section>
-                    <div class="card-body">
-                      <h5 class="card-title">Counselling Awareness Month 2024</h5>
-                      <p class="card-text">
-                        <small>Mon, 2 Sep 2024 • 10.00 AM<br>
-                          <span class="text-muted">INTI International College Penang</span></small>
-                      </p>
-                      <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>87 registered</span>
-                    </div>
-                  </section>
+                    <img src="img/<?php echo htmlspecialchars($event['image']); ?>" alt="eventImage" class="card-img-top">
+                    <section>
+                      <div class="card-body">
+                          <h5 class="card-title"><?php echo htmlspecialchars($event['name']); ?></h5>
+                          <p class="card-text">
+                            <small><?php echo date('D, d M Y • h.i A', strtotime($event['startdatetime'])); ?><br>
+                              <span class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></span></small>
+                          </p>
+                      </div>
+                    </section>
                 </div>
-              </section>
+              </div>
+              <div class="modal" id="registerModal-<?php echo $event['id']; ?>">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                  <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                      <h4 class="modal-title">Summary</h4>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                      <img src="img/<?php echo htmlspecialchars($event['image']); ?>" alt="eventImage" class="img-fluid rounded">
+                      <h2><?php echo htmlspecialchars($event['name']); ?></h2>
+                      <form class="event-info pt-2">
+                        <div class="pb-4">
+                          <h3>Date and Time</h3>
+                          <span><?php echo date('D, d M Y • h.i A', strtotime($event['startdatetime'])); ?></span>
+                        </div>
+                        <div class="pb-4">
+                          <h3>Location</h3>
+                          <span><?php echo htmlspecialchars($event['campus_name']); ?></span>
+                        </div>
+                        <div class="pb-4">
+                          <h3>About this event</h3>
+                          <span><?php echo htmlspecialchars($event['description']); ?></span>
+                        </div>
+                      </form>
+                    </div>
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-secondary">Register</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+            <?php endforeach; ?>
           </div>
-          <div class="col">
-              <div>
-                  <section>
-                    <div class="card">
-                      <a href="#">
-                          <img src="/INTIEventManagement/img/Anti-DrugCampaign.jpg" alt="eventImage" class="card-img-top">
-                      </a>
-                      <section>
-                        <div class="card-body">
-                            <h5 class="card-title">Anti-Drug Campaign</h5>
-                            <p class="card-text">
-                              <small>Sun, 22 Oct 2024 • 12.00 PM<br>
-                                <span class="text-muted">INTI International College Penang</span></small>
-                            </p>
-                            <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>60 registered</span>
-                        </div>
-                      </section>
-                    </div>
-                  </section>
-              </div>
-          </div>
-          <div class="col">
-              <div>
-                  <section>
-                    <div class="card">
-                      <a href="#">
-                          <img src="/INTIEventManagement/img/Accounting&Finance.jpg" alt="eventImage" class="card-img-top">
-                      </a>
-                      <section>
-                        <div class="card-body">
-                            <h5 class="card-title">Accounting & Finance Week</h5>
-                            <p class="card-text">
-                              <small>Tue, 26 Oct 2024 • 12.00 PM<br>
-                                <span class="text-muted">INTI International College Subang</span></small>
-                            </p>
-                            <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>90 registered</span>
-                        </div>
-                      </section>
-                    </div>
-                  </section>
-              </div>
-          </div>
-          <div class="col">
-              <div>
-                  <section>
-                    <div class="card">
-                      <a href="#">
-                          <img src="/INTIEventManagement/img/InternationalCharityFoodFestival.jpg" alt="eventImage" class="card-img-top">
-                      </a>
-                      <section>
-                        <div class="card-body">
-                            <h5 class="card-title">International Charity</h5>
-                            <p class="card-text">
-                              <small>Sun, 3 Nov 2024 • 2.00 PM<br>
-                                <span class="text-muted">INTI International College Penang</span></small>
-                            </p>
-                            <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>60 registered</span>
-                        </div>
-                      </section>
-                    </div>
-                  </section>
-              </div>
-          </div>
-          <div class="col">
-              <div>
-                  <section>
-                    <div class="card">
-                      <a href="#">
-                          <img src="/INTIEventManagement/img/Anti-DrugCampaign.jpg" alt="eventImage" class="card-img-top">
-                      </a>
-                      <section>
-                        <div class="card-body">
-                            <h5 class="card-title">Anti-Drug Campaign</h5>
-                            <p class="card-text">
-                              <small>Sun, 22 Oct 2024 • 12.00 PM<br>
-                                <span class="text-muted">INTI International College Penang</span></small>
-                            </p>
-                            <span class="d-flex"><small class="material-symbols-outlined me-1">person</small>60 registered</span>
-                        </div>
-                      </section>
-                    </div>
-                  </section>
-              </div>
-          </div>
-        </div>
+        <?php endif; ?>
       </div>
     </div>
   </div>
 </body>
 </html>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script src="javascript.js"></script>
 <script>

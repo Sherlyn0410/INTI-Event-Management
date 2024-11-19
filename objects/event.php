@@ -232,26 +232,30 @@ class Event{
                         user u
                             ON e.user_id = u.id
                 WHERE
-                    e.name LIKE ? AND c.name LIKE ?
-                ORDER BY
-                    e.startdatetime ASC";
-    
+                    e.name LIKE ?";
+
+        // add campus condition if campus is specified
+        if ($campus != '0' && $campus != '') {
+            $query .= " AND e.campus_id = ?";
+        }
+
+        $query .= " ORDER BY e.startdatetime ASC";
+
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // sanitize
         $name = htmlspecialchars(strip_tags($name));
-        $campus = htmlspecialchars(strip_tags($campus));
         $name = "%{$name}%";
-        $campus = "%{$campus}%";
-    
-        // bind
+
+        // bind parameters
         $stmt->bindParam(1, $name);
-        $stmt->bindParam(2, $campus);
-    
+        if ($campus != '0' && $campus != '') {
+            $stmt->bindParam(2, $campus);
+        }
+
         // execute query
         $stmt->execute();
-    
         return $stmt;
     }
 
@@ -283,6 +287,86 @@ class Event{
         $stmt->execute();
     
         // return values from database
+        return $stmt;
+    }
+
+    // read latest events
+    function readLatest($limit) {
+        // select query to get the latest events
+        $query = "SELECT
+                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
+                FROM
+                    " . $this->table_name . " e
+                    LEFT JOIN
+                        campus c
+                            ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
+                ORDER BY
+                    e.id DESC
+                LIMIT ?";
+
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+
+        // bind limit parameter
+        $stmt->bindParam(1, $limit, PDO::PARAM_INT);
+
+        // execute query
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // read random events
+    function readRandom($limit) {
+        // select query to get random events
+        $query = "SELECT
+                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
+                FROM
+                    " . $this->table_name . " e
+                    LEFT JOIN
+                        campus c
+                            ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
+                ORDER BY
+                    RAND()
+                LIMIT ?";
+
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+
+        // bind limit parameter
+        $stmt->bindParam(1, $limit, PDO::PARAM_INT);
+
+        // execute query
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // read events by user
+    public function readByUser($user_id) {
+        $query = "SELECT
+                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
+                FROM
+                    " . $this->table_name . " e
+                    LEFT JOIN
+                        campus c
+                            ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
+                WHERE
+                    e.user_id = ?
+                ORDER BY
+                    e.startdatetime DESC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(1, $user_id);
+        $stmt->execute();
+
         return $stmt;
     }
 

@@ -1,5 +1,18 @@
 <?php
 session_start();
+require_once 'config/database.php';
+require_once 'objects/event.php';
+
+$database = new Database();
+$db = $database->getConnection();
+$event = new Event($db);
+
+// Get the logged-in user's ID
+$user_id = $_SESSION['user_id'];
+
+// Query the events created by the logged-in user
+$stmt = $event->readByUser($user_id);
+$events = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,10 +37,10 @@ session_start();
             <input class="form-control me-md-2" type="search" placeholder="Search events here..." aria-label="Search">
           </div>
             <div class="col-2 text-end">
-                <a class="btn btn-secondary btn-create" href="createEvent.html">Create Event</a>
+                <a class="btn btn-secondary btn-create" href="createEvent.php">Create Event</a>
             </div>
         </div>
-        <div>
+        <div class="manage-event">
             <table class="table">
                 <thead class="table-dark">
                     <tr class="text-start">
@@ -38,44 +51,27 @@ session_start();
                     </tr>
                 </thead>
                 <tbody>
-                  <tr class="p-2">
-                    <th scope="row" class="text-uppercase">sep<br>8</th>
-                    <td class="col-3"><img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" class="img-fluid rounded" alt="EventImage"></td>
-                    <td>
-                        <strong>Changing The Narrative On Suicide</strong><br>
-                        <div><small class="text-muted">INTI International College Penang</small></div>
-                        <div><small class="text-muted">Sunday, September 8, 2024 at 2.00 PM</small></div>
-                    </td>           
-                    <td>56/100</td>
-                    <td class="text-success">Published</td>
-                    <td>
-                        <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
-                        <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Edit event</a></li>
-                        <li><a class="dropdown-item" href="#">Export CSV</a></li>
-                        <li><a class="dropdown-item" href="#">Delete</a></li>
-                        </ul>
-                    </td>
-                  </tr>
+                  <?php foreach ($events as $event): ?>
                   <tr>
-                      <th scope="row" class="text-uppercase">oct<br>15</th>
-                      <td><img src="" alt="EventImage"></td>
+                    <th scope="row" class="text-uppercase"><?php echo date('M', strtotime($event['startdatetime'])); ?><br><?php echo date('d', strtotime($event['startdatetime'])); ?></th>
+                    <td class="col-3"><img src="/INTIEventManagement/img/<?php echo htmlspecialchars($event['image']); ?>" class="img-fluid rounded" alt="EventImage"></td>
                     <td>
-                        <strong>Changing The Narrative On Suicide</strong><br>
-                        <p class="card-text">INTI International College Penang</p>
-                        <p>Sunday, September 8, 2024 at 2.00 PM</p>
+                        <strong><?php echo htmlspecialchars($event['name']); ?></strong><br>
+                        <div><small class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></small></div>
+                        <div><small class="text-muted"><?php echo date('l, F j, Y \a\t g:i A', strtotime($event['startdatetime'])); ?></small></div>
                     </td>           
-                    <td>56/100</td>
-                    <td class="text-danger">Cancelled</td>
+                    <td>/<?php echo htmlspecialchars($event['capacity']); ?></td>
+                    <td class="<?php echo $event['status'] == 'Published' ? 'text-success' : 'text-danger'; ?>"><?php echo htmlspecialchars($event['status']); ?></td>
                     <td>
                         <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
                         <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Edit event</a></li>
+                        <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event</a></li>
                         <li><a class="dropdown-item" href="#">Export CSV</a></li>
                         <li><a class="dropdown-item" href="#">Delete</a></li>
                         </ul>
                     </td>
                   </tr>
+                  <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
