@@ -54,7 +54,7 @@ $randomEvents = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
           <?php foreach ($randomEvents as $event): ?>
           <div class="event col">
-            <a href="eventListing.php?id=<?php echo $event['id']; ?>" class="text-decoration-none">
+            <a href="eventListing.php?search=<?php echo urlencode($event['name']); ?>&campus=<?php echo urlencode($event['campus_id']); ?>" class="text-decoration-none">
               <div class="card">
                 <img src="img/<?php echo htmlspecialchars($event['image']); ?>" alt="eventImage" class="card-img-top">
                 <section>

@@ -52,7 +52,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="container-fluid pt-4">
         <h3>Events</h3>
         <?php if (empty($events)): ?>
-          <p>No events found.</p>
+          <div class="py-4">No events found.</div>
         <?php else: ?>
           <div class="row row-cols-1 row-cols-md-4 g-4">
             <?php foreach ($events as $event): ?>

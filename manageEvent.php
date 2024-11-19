@@ -41,6 +41,9 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
         <div class="manage-event">
+            <?php if (empty($events)): ?>
+                <div class="py-4">No events found.</div>
+            <?php else: ?>
             <table class="table">
                 <thead class="table-dark">
                     <tr class="text-start">
@@ -74,6 +77,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                   <?php endforeach; ?>
                 </tbody>
             </table>
+            <?php endif; ?>
         </div>
     </div>
   </div>
