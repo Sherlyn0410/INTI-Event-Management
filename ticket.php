@@ -1,5 +1,18 @@
 <?php
 session_start();
+require_once 'config/database.php';
+require_once 'objects/purchase.php';
+
+$database = new Database();
+$db = $database->getConnection();
+$purchase = new Purchase($db);
+
+// Get the logged-in user's ID
+$user_id = $_SESSION['user_id'];
+
+// Fetch purchases by user ID
+$stmt = $purchase->readByUser($user_id);
+$purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,71 +46,108 @@ session_start();
         </ul>
         <div class="tab-content pt-4" id="eventTicketTabContent">
           <div class="tab-pane fade show active" id="upcoming-tab-pane" role="tabpanel" aria-labelledby="upcoming-tab" tabindex="0">
-            <div class="card">
-              <div class="row card-body">
-                <div class="col-md-1">
-                  <strong class="text-uppercase">oct<br>8</strong>
+            <?php $upcomingFound = false; ?>
+            <?php foreach ($purchases as $purchase): ?>
+              <?php if (strtotime($purchase['startdatetime']) > time() && $purchase['status'] == 'approved'): ?>
+                <?php $upcomingFound = true; ?>
+                <div class="card mb-3">
+                  <div class="row card-body">
+                    <div class="col-md-1">
+                      <strong class="text-uppercase"><?php echo date('M', strtotime($purchase['startdatetime'])); ?><br><?php echo date('d', strtotime($purchase['startdatetime'])); ?></strong>
+                    </div>
+                    <div class="col-md-3">
+                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded" alt="eventImage">
+                    </div>
+                    <div class="col-md-8">
+                      <div>
+                        <h5 class="card-title"><?php echo htmlspecialchars($purchase['event_name']); ?></h5>
+                        <p class="card-text"><?php echo htmlspecialchars($purchase['campus_name']); ?></p>
+                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?></p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="col-md-3">
-                  <img src="/INTIEventManagement/img/Anti-DrugCampaign.jpg" class="img-fluid rounded" alt="eventImage">
-                </div>
-                <div class="col-md-8">
-                  <div>
-                    <h5 class="card-title">Changing The Narrative On Suicide</h5>
-                    <p class="card-text">INTI International College Penang</p>
-                    <p class="card-text">Tuesday, October 8, 2024 at 12.00 PM</p>
+              <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if (!$upcomingFound): ?>
+              <div class="card">
+                <div class="row card-body">
+                  <div class="col card-text">
+                    <div class="text-body-secondary text-center"><i class="material-symbols-outlined d-block mb-2">confirmation_number</i>No upcoming tickets found</div>
                   </div>
                 </div>
               </div>
-            </div>
+            <?php endif; ?>
           </div>
           <div class="tab-pane fade" id="past-tab-pane" role="tabpanel" aria-labelledby="past-tab" tabindex="0">
-            <div class="card">
-              <div class="row card-body">
-                <div class="col-md-1">
-                  <strong class="text-uppercase">sep<br>8</strong>
+            <?php $pastFound = false; ?>
+            <?php foreach ($purchases as $purchase): ?>
+              <?php if (strtotime($purchase['startdatetime']) <= time() && $purchase['status'] == 'approved'): ?>
+                <?php $pastFound = true; ?>
+                <div class="card mb-3">
+                  <div class="row card-body">
+                    <div class="col-md-1">
+                      <strong class="text-uppercase"><?php echo date('M', strtotime($purchase['startdatetime'])); ?><br><?php echo date('d', strtotime($purchase['startdatetime'])); ?></strong>
+                    </div>
+                    <div class="col-md-3">
+                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded" alt="eventImage">
+                    </div>
+                    <div class="col-md-8">
+                      <div>
+                        <h5 class="card-title"><?php echo htmlspecialchars($purchase['event_name']); ?></h5>
+                        <p class="card-text"><?php echo htmlspecialchars($purchase['campus_name']); ?></p>
+                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?></p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="col-md-3">
-                  <img src="/INTIEventManagement/img/CounsellingAwarenessMonth2024.jpg" class="img-fluid rounded" alt="eventImage">
-                </div>
-                <div class="col-md-8">
-                  <div>
-                    <h5 class="card-title">Counselling Awareness Month 2024</h5>
-                    <p class="card-text">INTI International College Penang</p>
-                    <p class="card-text">Sunday, September 8, 2024 at 2.00 PM</p>
+              <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if (!$pastFound): ?>
+              <div class="card">
+                <div class="row card-body">
+                  <div class="col card-text">
+                    <div class="text-body-secondary text-center"><i class="material-symbols-outlined d-block mb-2">confirmation_number</i>No past tickets found</div>
                   </div>
                 </div>
               </div>
-            </div>
+            <?php endif; ?>
           </div>
           <div class="tab-pane fade" id="pending-tab-pane" role="tabpanel" aria-labelledby="pending-tab" tabindex="0">
-            <div class="card">
-              <div class="row card-body">
-                <div class="col card-text">
-                  <div class="text-body-secondary text-center"><i class="material-symbols-outlined d-block mb-2">confirmation_number</i>No pending tickets</div>
+            <?php $pendingFound = false; ?>
+            <?php foreach ($purchases as $purchase): ?>
+              <?php if ($purchase['status'] == 'pending'): ?>
+                <?php $pendingFound = true; ?>
+                <div class="card mb-3">
+                  <div class="row card-body">
+                    <div class="col-md-1">
+                      <strong class="text-uppercase"><?php echo date('M', strtotime($purchase['startdatetime'])); ?><br><?php echo date('d', strtotime($purchase['startdatetime'])); ?></strong>
+                    </div>
+                    <div class="col-md-3">
+                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded" alt="eventImage">
+                    </div>
+                    <div class="col-md-8">
+                      <div>
+                        <h5 class="card-title"><?php echo htmlspecialchars($purchase['event_name']); ?></h5>
+                        <p class="card-text"><?php echo htmlspecialchars($purchase['campus_name']); ?></p>
+                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <?php endif; ?>
+            <?php endforeach; ?>
+            <?php if (!$pendingFound): ?>
+              <div class="card">
+                <div class="row card-body">
+                  <div class="col card-text">
+                    <div class="text-body-secondary text-center"><i class="material-symbols-outlined d-block mb-2">confirmation_number</i>No pending tickets found</div>
+                  </div>
                 </div>
               </div>
-            </div>
+            <?php endif; ?>
           </div>
-
         </div>
-        
-      </div>
-      <div class="container-fluid pt-4">
-        <!-- <table class="table">
-          <tr>
-            <td rowspan="3">SEP<br>8</td>
-            <td rowspan="3"><img src="" alt="EventImage"></td>
-            <td><h2>Changing The Narrative On Suicide</h2></td>           
-          </tr>
-          <tr>
-              <td>INTI International College Penang</td>
-          </tr>
-          <tr>
-              <td>Sunday, September 8, 2024 at 2.00 PM</td>
-          </tr>
-        </table> -->
-        
       </div>
     </div>
   </div>

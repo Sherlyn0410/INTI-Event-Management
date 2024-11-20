@@ -274,26 +274,37 @@ class Event{
     }
 
     // delete the event
-    function delete(){
-    
-        // delete query
-        $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
-    
-        // prepare query
-        $stmt = $this->conn->prepare($query);
-    
-        // sanitize
-        $this->id=htmlspecialchars(strip_tags($this->id));
-    
-        // bind id of record to delete
-        $stmt->bindParam(1, $this->id);
-    
-        // execute query
-        if($stmt->execute()){
+    function delete() {
+        // Start a transaction
+        $this->conn->beginTransaction();
+
+        try {
+            // Delete related purchases
+            $query = "DELETE FROM purchase WHERE ticket_id IN (SELECT id FROM ticket WHERE event_id = ?)";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $this->id);
+            $stmt->execute();
+
+            // Delete related tickets
+            $query = "DELETE FROM ticket WHERE event_id = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $this->id);
+            $stmt->execute();
+
+            // Delete the event
+            $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(1, $this->id);
+            $stmt->execute();
+
+            // Commit the transaction
+            $this->conn->commit();
             return true;
+        } catch (Exception $e) {
+            // Rollback the transaction if something failed
+            $this->conn->rollBack();
+            return false;
         }
-    
-        return false;
     }
 
     

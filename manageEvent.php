@@ -72,12 +72,12 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td>
                         <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event</a></li>
-                            <li><a class="dropdown-item" href="#">Export CSV</a></li>
+                            <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event details</a></li>
+                            <li><a class="dropdown-item" href="#">Manage registrants</a></li>
                             <li>
                                 <form method="POST" action="manageEvent.php" onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
                                     <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
-                                    <button type="submit" name="delete_event" class="dropdown-item">Delete</button>
+                                    <button type="submit" name="delete_event" class="dropdown-item">Delete event</button>
                                 </form>
                             </li>
                         </ul>
