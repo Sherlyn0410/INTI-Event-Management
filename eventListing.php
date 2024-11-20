@@ -36,6 +36,12 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div id="navbar-placeholder"></div>
   <div class="main-wrapper">
     <div class="wrapper-padding">
+      <?php if (isset($_SESSION['message'])): ?>
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          <?php echo $_SESSION['message']; unset($_SESSION['message']); ?>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <?php endif; ?>
       <form method="GET" action="eventListing.php">
         <div class="d-flex flex-column flex-md-row">
           <input class="me-md-2 mb-2 mb-md-0 form-control" type="search" name="search" placeholder="Search events you are interested here..." aria-label="Search" value="<?php echo htmlspecialchars($searchKeyword); ?>">
@@ -100,8 +106,11 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </div>
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-secondary">Register</button>
+                      <form method="POST" action="registerEvent.php">
+                        <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-secondary">Register</button>
+                      </form>
                     </div>
                   </div>
                 </div>

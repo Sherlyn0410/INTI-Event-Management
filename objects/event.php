@@ -44,11 +44,81 @@ class Event{
         // prepare query statement
         $stmt = $this->conn->prepare($query);
     
-        // execute query
+        // execute query 
         $stmt->execute();
     
         return $stmt;
     }
+
+    // read random events
+    function readRandom($limit) {
+        // select query to get random events
+        $query = "SELECT
+                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
+                FROM
+                    " . $this->table_name . " e
+                    LEFT JOIN
+                        campus c
+                            ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
+                ORDER BY
+                    RAND()
+                LIMIT ?";
+
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+
+        // bind limit parameter
+        $stmt->bindParam(1, $limit, PDO::PARAM_INT);
+
+        // execute query
+        $stmt->execute();
+        return $stmt;
+    }
+
+    // search events
+    function search($keywords, $campus_id) {
+        // select all query
+        $query = "SELECT
+                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
+                FROM
+                    " . $this->table_name . " e
+                    LEFT JOIN
+                        campus c
+                            ON e.campus_id = c.id
+                    LEFT JOIN
+                        user u
+                            ON e.user_id = u.id
+                WHERE
+                    e.name LIKE ?";
+
+        // If a specific campus is selected, add the campus condition
+        if ($campus_id != '0') {
+            $query .= " AND e.campus_id = ?";
+        }
+
+        $query .= " ORDER BY e.startdatetime ASC";
+
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+
+        // bind parameters
+        $keywords = "%{$keywords}%";
+        $stmt->bindParam(1, $keywords);
+
+        // If a specific campus is selected, bind the campus_id parameter
+        if ($campus_id != '0') {
+            $stmt->bindParam(2, $campus_id);
+        }
+
+        // execute query
+        $stmt->execute();
+
+        return $stmt;
+    }
+
 
     // create event
     function create(){
@@ -138,8 +208,15 @@ class Event{
     }
 
     // update the event
-    function update(){
-    
+    function update($ticket) {
+        // Check the number of sold tickets
+        $soldTickets = $ticket->countSoldTickets($this->id);
+
+        if ($this->capacity < $soldTickets) {
+            // If the new capacity is less than the number of sold tickets, return false
+            return false;
+        }
+
         // update query
         $query = "UPDATE
                     " . $this->table_name . "
@@ -155,25 +232,25 @@ class Event{
                     user_id = :user_id
                 WHERE
                     id = :id";
-    
+
         // prepare query statement
         $stmt = $this->conn->prepare($query);
-    
+
         // sanitize
-        $this->name=htmlspecialchars(strip_tags($this->name));
-        $this->image=htmlspecialchars(strip_tags($this->image));
-        $this->description=htmlspecialchars(strip_tags($this->description));
-        $this->startdatetime=htmlspecialchars(strip_tags($this->startdatetime));
-        $this->endtime=htmlspecialchars(strip_tags($this->endtime));
-        $this->campus_id=htmlspecialchars(strip_tags($this->campus_id));
-        $this->capacity=htmlspecialchars(strip_tags($this->capacity));
-        $this->status=htmlspecialchars(strip_tags($this->status));
-        $this->id=htmlspecialchars(strip_tags($this->id));
-        $this->user_id=htmlspecialchars(strip_tags($this->user_id));
+        $this->name = htmlspecialchars(strip_tags($this->name));
+        $this->image = htmlspecialchars(strip_tags($this->image));
+        $this->description = htmlspecialchars(strip_tags($this->description));
+        $this->startdatetime = htmlspecialchars(strip_tags($this->startdatetime));
+        $this->endtime = htmlspecialchars(strip_tags($this->endtime));
+        $this->campus_id = htmlspecialchars(strip_tags($this->campus_id));
+        $this->capacity = htmlspecialchars(strip_tags($this->capacity));
+        $this->status = htmlspecialchars(strip_tags($this->status));
+        $this->id = htmlspecialchars(strip_tags($this->id));
+        $this->user_id = htmlspecialchars(strip_tags($this->user_id));
 
         // explicitly set status to "Published"
         $this->status = "Published";
-    
+
         // bind new values
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':image', $this->image);
@@ -185,12 +262,14 @@ class Event{
         $stmt->bindParam(':status', $this->status);
         $stmt->bindParam(':id', $this->id);
         $stmt->bindParam(':user_id', $this->user_id);
-    
+
         // execute the query
-        if($stmt->execute()){
+        if ($stmt->execute()) {
+            // Update tickets based on the new capacity
+            $ticket->generateTickets($this->id, $this->capacity);
             return true;
         }
-    
+
         return false;
     }
 
@@ -218,47 +297,6 @@ class Event{
     }
 
     
-    // search events
-    function search($name, $campus){
-        // select all query with search condition
-        $query = "SELECT
-                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
-                FROM
-                    " . $this->table_name . " e
-                    LEFT JOIN
-                        campus c
-                            ON e.campus_id = c.id
-                    LEFT JOIN
-                        user u
-                            ON e.user_id = u.id
-                WHERE
-                    e.name LIKE ?";
-
-        // add campus condition if campus is specified
-        if ($campus != '0' && $campus != '') {
-            $query .= " AND e.campus_id = ?";
-        }
-
-        $query .= " ORDER BY e.startdatetime ASC";
-
-        // prepare query statement
-        $stmt = $this->conn->prepare($query);
-
-        // sanitize
-        $name = htmlspecialchars(strip_tags($name));
-        $name = "%{$name}%";
-
-        // bind parameters
-        $stmt->bindParam(1, $name);
-        if ($campus != '0' && $campus != '') {
-            $stmt->bindParam(2, $campus);
-        }
-
-        // execute query
-        $stmt->execute();
-        return $stmt;
-    }
-
     // read event with pagination
     public function readPaging($from_record_num, $records_per_page){
     
@@ -318,33 +356,6 @@ class Event{
         return $stmt;
     }
 
-    // read random events
-    function readRandom($limit) {
-        // select query to get random events
-        $query = "SELECT
-                    c.name as campus_name, u.name as user_name, e.id, e.name, e.image, e.description, e.startdatetime, e.endtime, e.campus_id, e.capacity, e.status, e.user_id
-                FROM
-                    " . $this->table_name . " e
-                    LEFT JOIN
-                        campus c
-                            ON e.campus_id = c.id
-                    LEFT JOIN
-                        user u
-                            ON e.user_id = u.id
-                ORDER BY
-                    RAND()
-                LIMIT ?";
-
-        // prepare query statement
-        $stmt = $this->conn->prepare($query);
-
-        // bind limit parameter
-        $stmt->bindParam(1, $limit, PDO::PARAM_INT);
-
-        // execute query
-        $stmt->execute();
-        return $stmt;
-    }
 
     // read events by user
     public function readByUser($user_id) {

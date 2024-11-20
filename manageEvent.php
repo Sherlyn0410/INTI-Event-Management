@@ -7,6 +7,18 @@ $database = new Database();
 $db = $database->getConnection();
 $event = new Event($db);
 
+// Handle delete event request
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_event'])) {
+    $event_id = $_POST['event_id'];
+    $event->id = $event_id;
+    if ($event->delete()) {
+        header('Location: manageEvent.php');
+        exit;
+    } else {
+        echo "Error deleting event.";
+    }
+}
+
 // Get the logged-in user's ID
 $user_id = $_SESSION['user_id'];
 
@@ -31,15 +43,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div id="navbar-placeholder"></div>
   <div class="main-wrapper">
     <div class="wrapper-padding">
-        <h3>Events</h3>
-        <div class="row justify-content-between mb-3">
-          <div class="col-6 d-flex">
-            <input class="form-control me-md-2" type="search" placeholder="Search events here..." aria-label="Search">
-          </div>
-            <div class="col-2 text-end">
-                <a class="btn btn-secondary btn-create" href="createEvent.php">Create Event</a>
-            </div>
-        </div>
+        <h3>Manage Event</h3>
         <div class="manage-event">
             <?php if (empty($events)): ?>
                 <div class="py-4">No events found.</div>
@@ -68,9 +72,14 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <td>
                         <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
                         <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event</a></li>
-                        <li><a class="dropdown-item" href="#">Export CSV</a></li>
-                        <li><a class="dropdown-item" href="#">Delete</a></li>
+                            <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event</a></li>
+                            <li><a class="dropdown-item" href="#">Export CSV</a></li>
+                            <li>
+                                <form method="POST" action="manageEvent.php" onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
+                                    <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                                    <button type="submit" name="delete_event" class="dropdown-item">Delete</button>
+                                </form>
+                            </li>
                         </ul>
                     </td>
                   </tr>

@@ -12,11 +12,13 @@ include_once 'config/database.php';
 
 // instantiate event object
 include_once 'objects/event.php';
+include_once 'objects/ticket.php'; // Include the ticket object
 
 $database = new Database();
 $db = $database->getConnection();
 
 $event = new Event($db);
+$ticket = new Ticket($db); // Instantiate the ticket object
 
 $isEdit = false;
 if (isset($_GET['id'])) {
@@ -51,19 +53,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Create or update the event
     if ($isEdit) {
-        if ($event->update()) {
+        if ($event->update($ticket)) {
             echo "<script>
                 alert('Event was successfully updated. The changes will notify the registrants.');
                 window.location.href = 'manageEvent.php';
             </script>";
         } else {
             echo "<script>
-                alert('Unable to update event.');
+                alert('Unable to update event. The new capacity cannot be less than the number of sold tickets.');
                 window.history.back();
             </script>";
         }
     } else {
         if ($event->create()) {
+            // Retrieve the last inserted event ID
+            $event->id = $db->lastInsertId();
+            // Generate tickets for the event
+            $ticket->generateTickets($event->id, $event->capacity);
             echo "<script>
                 alert('Event was successfully created.');
                 window.location.href = 'index.php';
@@ -115,7 +121,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="pb-4">
           <label for="campus">Where is it located?</label>
           <select id="campus" name="campus_id" class="form-select" required>
-              <option value="" disabled>Select campus</option>
+              <option value="" disabled <?php echo !$isEdit ? 'selected' : ''; ?>>Select campus</option>
               <option value="1" <?php echo $isEdit && $event->campus_id == 1 ? 'selected' : ''; ?>>INTI International University</option>
               <option value="2" <?php echo $isEdit && $event->campus_id == 2 ? 'selected' : ''; ?>>INTI International College Subang</option>
               <option value="3" <?php echo $isEdit && $event->campus_id == 3 ? 'selected' : ''; ?>>INTI International College Penang</option>
