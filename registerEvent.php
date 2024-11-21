@@ -59,8 +59,8 @@ if (!$ticket) {
 
 $ticket_id = $ticket['id'];
 
-// Update ticket status to 'sold'
-$query = "UPDATE ticket SET status = 'sold' WHERE id = ?";
+// Update ticket status to 'pending'
+$query = "UPDATE ticket SET status = 'pending' WHERE id = ?";
 $stmt = $db->prepare($query);
 $stmt->bindParam(1, $ticket_id);
 if (!$stmt->execute()) {

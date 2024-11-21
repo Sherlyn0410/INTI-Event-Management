@@ -2,10 +2,12 @@
 session_start();
 require_once 'config/database.php';
 require_once 'objects/event.php';
+require_once 'objects/ticket.php';
 
 $database = new Database();
 $db = $database->getConnection();
 $event = new Event($db);
+$ticket = new Ticket($db);
 
 // Handle delete event request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_event'])) {
@@ -67,13 +69,13 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div><small class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></small></div>
                         <div><small class="text-muted"><?php echo date('l, F j, Y \a\t g:i A', strtotime($event['startdatetime'])); ?></small></div>
                     </td>           
-                    <td>/<?php echo htmlspecialchars($event['capacity']); ?></td>
+                    <td><?php echo htmlspecialchars($ticket->countSoldTickets($event['id'])); ?>/<?php echo htmlspecialchars($event['capacity']); ?></td>
                     <td class="<?php echo $event['status'] == 'Published' ? 'text-success' : 'text-danger'; ?>"><?php echo htmlspecialchars($event['status']); ?></td>
                     <td>
                         <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event details</a></li>
-                            <li><a class="dropdown-item" href="#">Manage registrants</a></li>
+                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
                             <li>
                                 <form method="POST" action="manageEvent.php" onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
                                     <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
@@ -91,11 +93,53 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
   </div>
 
+  <!-- Modal -->
+  <div class="modal fade" id="manageRegistrantsModal" tabindex="-1" aria-labelledby="manageRegistrantsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="manageRegistrantsModalLabel">Manage Registrants</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Content will be loaded here via AJAX -->
+        </div>
+        <div class="modal-footer">
+          <a id="download-registrant-list" class="btn btn-secondary" href="#">Download Registrant List</a>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="javascript.js"></script>
+  <script>
+    loadNavbar('manage');
+
+    // Load registrants into the modal
+    var manageRegistrantsModal = document.getElementById('manageRegistrantsModal');
+    manageRegistrantsModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var eventId = button.getAttribute('data-event-id');
+
+      var modalBody = manageRegistrantsModal.querySelector('.modal-body');
+      modalBody.innerHTML = 'Loading...';
+
+      // Fetch registrants via AJAX
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'fetchRegistrant.php?event_id=' + eventId, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          modalBody.innerHTML = xhr.responseText;
+        }
+      };
+      xhr.send();
+
+      // Set the download link for the registrant list
+      var downloadButton = document.getElementById('download-registrant-list');
+      downloadButton.href = 'exportRegistrant.php?event_id=' + eventId;
+    });
+  </script>
 </body>
 </html>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<script src="javascript.js"></script>
-<script>
-  loadNavbar('manage');
-</script>
