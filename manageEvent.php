@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'checkLogin.php';
 require_once 'config/database.php';
 require_once 'objects/event.php';
 require_once 'objects/ticket.php';
@@ -8,6 +8,9 @@ $database = new Database();
 $db = $database->getConnection();
 $event = new Event($db);
 $ticket = new Ticket($db);
+
+// Update the status of completed events
+$event->updateCompletedEvents();
 
 // Handle delete event request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_event'])) {
@@ -70,28 +73,32 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div><small class="text-muted"><?php echo date('l, F j, Y \a\t g:i A', strtotime($event['startdatetime'])); ?></small></div>
                     </td>           
                     <td><?php echo htmlspecialchars($ticket->countSoldTickets($event['id'])); ?>/<?php echo htmlspecialchars($event['capacity']); ?></td>
-                    <td class="<?php echo $event['status'] == 'Published' ? 'text-success' : 'text-danger'; ?>"><?php echo htmlspecialchars($event['status']); ?></td>
+                    <td class="<?php echo $event['status'] == 'published' ? 'text-success' : 'text-warning'; ?>"><?php echo htmlspecialchars(ucfirst($event['status'])); ?></td>
                     <td>
                         <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event details</a></li>
-                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
-                            <li>
-                                <form method="POST" action="manageEvent.php" onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
-                                    <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
-                                    <button type="submit" name="delete_event" class="dropdown-item">Delete event</button>
-                                </form>
-                            </li>
+                            <?php if ($event['status'] === 'completed'): ?>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
+                            <?php else: ?>
+                                <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event details</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
+                                <li>
+                                    <form method="POST" action="manageEvent.php" onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
+                                        <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                                        <button type="submit" name="delete_event" class="dropdown-item">Delete event</button>
+                                    </form>
+                                </li>
+                            <?php endif; ?>
                         </ul>
                     </td>
                   </tr>
                   <?php endforeach; ?>
                 </tbody>
-            </table>
-            <?php endif; ?>
+              </table>
+              <?php endif; ?>
+            </div>
         </div>
     </div>
-  </div>
 
   <!-- Modal -->
   <div class="modal fade" id="manageRegistrantsModal" tabindex="-1" aria-labelledby="manageRegistrantsModalLabel" aria-hidden="true">
@@ -105,8 +112,8 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <!-- Content will be loaded here via AJAX -->
         </div>
         <div class="modal-footer">
-          <a id="download-registrant-list" class="btn btn-secondary" href="#">Download Registrant List</a>
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+          <a id="download-registrant-list" class="btn btn-secondary" href="#">Download Registrant List</a>
         </div>
       </div>
     </div>

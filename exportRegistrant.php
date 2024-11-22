@@ -1,16 +1,25 @@
 <?php
-session_start();
+include 'checkLogin.php';
 require_once 'config/database.php';
-
-if (!isset($_SESSION['user_id'])) {
-    echo "Unauthorized access";
-    exit;
-}
 
 $event_id = $_GET['event_id'];
 
 $database = new Database();
 $db = $database->getConnection();
+
+// Fetch the event name
+$query = "SELECT name FROM event WHERE id = ?";
+$stmt = $db->prepare($query);
+$stmt->bindParam(1, $event_id);
+$stmt->execute();
+$event = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$event) {
+    echo "<p>Event not found.</p>";
+    exit;
+}
+
+$event_name = $event['name'];
 
 // Fetch registrants for the given event with status 'approved', ordered by user ID
 $query = "SELECT u.id as user_id, u.name as user_name, u.email, u.phoneNo, c.name as campus_name, p.status
@@ -36,13 +45,13 @@ if (empty($registrants)) {
 
 // Set the headers to indicate a file download
 header('Content-Type: text/csv');
-header('Content-Disposition: attachment;filename="registrants_' . $event_id . '.csv"');
+header('Content-Disposition: attachment;filename="' . preg_replace('/[^A-Za-z0-9_\-]/', '_', $event_name) . '.csv"');
 
 // Open the output stream
 $output = fopen('php://output', 'w');
 
 // Write the header row
-fputcsv($output, ['Student ID', 'Name', 'Email', 'Contact Number', 'Campus']);
+fputcsv($output, ['User ID', 'Name', 'Email', 'Contact Number', 'Campus']);
 
 // Write the data rows
 foreach ($registrants as $registrant) {
@@ -50,7 +59,7 @@ foreach ($registrants as $registrant) {
         $registrant['user_id'],
         $registrant['user_name'],
         $registrant['email'],
-        '60' . $registrant['phoneNo'],
+        '+60' . $registrant['phoneNo'],
         $registrant['campus_name']
     ]);
 }
