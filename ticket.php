@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'checkLogin.php';
 require_once 'config/database.php';
 require_once 'objects/purchase.php';
 

@@ -38,6 +38,8 @@ class Event{
                     LEFT JOIN
                         user u
                             ON e.user_id = u.id
+                WHERE
+                    e.status = 'published'
                 ORDER BY
                     e.startdatetime ASC";
     
@@ -63,6 +65,8 @@ class Event{
                     LEFT JOIN
                         user u
                             ON e.user_id = u.id
+                WHERE
+                    e.status = 'published'
                 ORDER BY
                     RAND()
                 LIMIT ?";
@@ -92,7 +96,7 @@ class Event{
                         user u
                             ON e.user_id = u.id
                 WHERE
-                    e.name LIKE ?";
+                    e.name LIKE ? AND e.status = 'published'";
 
         // If a specific campus is selected, add the campus condition
         if ($campus_id != '0') {
@@ -248,9 +252,6 @@ class Event{
         $this->id = htmlspecialchars(strip_tags($this->id));
         $this->user_id = htmlspecialchars(strip_tags($this->user_id));
 
-        // explicitly set status to "Published"
-        $this->status = "Published";
-
         // bind new values
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':image', $this->image);
@@ -352,6 +353,8 @@ class Event{
                     LEFT JOIN
                         user u
                             ON e.user_id = u.id
+                WHERE
+                    e.status = 'published'
                 ORDER BY
                     e.id DESC
                 LIMIT ?";
@@ -401,6 +404,14 @@ class Event{
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
     
         return $row['total_rows'];
+    }
+
+    public function updateCompletedEvents() {
+        $query = "UPDATE " . $this->table_name . " 
+                  SET status = 'completed' 
+                  WHERE startdatetime < NOW() AND status = 'published'";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute();
     }
 }
 ?>

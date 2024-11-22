@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'checkLogin.php';
 require_once 'config/database.php';
 
 $database = new Database();

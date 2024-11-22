@@ -1,11 +1,13 @@
 <?php
-session_start();
+include 'checkLogin.php';
 require_once 'config/database.php';
 require_once 'objects/event.php';
+require_once 'objects/ticket.php';
 
 $database = new Database();
 $db = $database->getConnection();
 $event = new Event($db);
+$ticket = new Ticket($db);
 
 // Query the latest 3 events for the carousel
 $stmt = $event->readLatest(3);
@@ -64,7 +66,11 @@ $randomEvents = $stmt->fetchAll(PDO::FETCH_ASSOC);
                       <small><?php echo date('D, d M Y • h.i A', strtotime($event['startdatetime'])); ?><br>
                         <span class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></span></small>
                     </p>
-                    <span class="d-flex"><small class="material-symbols-outlined me-1">person</small><?php echo htmlspecialchars($event['capacity']); ?> registered</span>
+                    <?php
+                    // Get the count of sold tickets for the event
+                    $soldTickets = $ticket->countSoldTickets($event['id']);
+                    ?>
+                    <span class="d-flex"><small class="material-symbols-outlined me-1">person</small><?php echo htmlspecialchars($soldTickets); ?> registered</span>
                   </div>
                 </section>
               </div>

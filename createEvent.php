@@ -1,24 +1,13 @@
 <?php
-session_start();
-
-// Check if the user is logged in
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
-}
-
-// get database connection
+include 'checkLogin.php';
 include_once 'config/database.php';
-
-// instantiate event object
 include_once 'objects/event.php';
-include_once 'objects/ticket.php'; // Include the ticket object
+include_once 'objects/ticket.php';
 
 $database = new Database();
 $db = $database->getConnection();
-
 $event = new Event($db);
-$ticket = new Ticket($db); // Instantiate the ticket object
+$ticket = new Ticket($db);
 
 $isEdit = false;
 if (isset($_GET['id'])) {

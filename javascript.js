@@ -108,22 +108,22 @@ function loadFooter() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Add event listener for the profile picture edit button
-    const editButton = document.getElementById('editButton');
-    if (editButton) {
-        editButton.addEventListener('click', function() {
-            document.getElementById('inputGroupFile04').click();
-        });
-    }
-
     // Add event listener for the logout button
     const logoutButton = document.getElementById('logoutButton');
     if (logoutButton) {
         logoutButton.addEventListener('click', function(event) {
             event.preventDefault();
             if (confirm('Are you sure you want to log out?')) {
-                window.location.href = 'login.php';
+                window.location.href = 'logout.php';
             }
+        });
+    }
+
+    // Add event listener for the profile picture edit button
+    const editButton = document.getElementById('editButton');
+    if (editButton) {
+        editButton.addEventListener('click', function() {
+            document.getElementById('inputGroupFile04').click();
         });
     }
 
