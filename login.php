@@ -5,18 +5,28 @@ require_once 'config/database.php';
 $error = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $database = new Database();
-    $db = $database->getConnection();
+    $recaptcha_secret = '6LfY-oYqAAAAAJzNN7CfRKO5zCCzxi5q_9ungE84';
+    $recaptcha_response = $_POST['g-recaptcha-response'];
 
-    $user_id = $_POST['user_id'];
-    $password = $_POST['password'];
-    $hash = password_hash($password, PASSWORD_DEFAULT);
+    $response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptcha_secret&response=$recaptcha_response");
+    $response_keys = json_decode($response, true);
 
-    if ($database->authenticate($user_id, $password)) {
-        header("Location: index.php");
-        exit();
+    if (intval($response_keys["success"]) !== 1) {
+        $error = "Please complete the reCAPTCHA.";
     } else {
-        $error = "Invalid username or password.";
+        $database = new Database();
+        $db = $database->getConnection();
+
+        $user_id = $_POST['user_id'];
+        $password = $_POST['password'];
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+
+        if ($database->authenticate($user_id, $password)) {
+            header("Location: index.php");
+            exit();
+        } else {
+            $error = "Invalid username or password.";
+        }
     }
 }
 ?>
@@ -47,8 +57,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
                 <label for="password"><b>Password</b></label>
                 <input type="password" class="form-control mb-0" placeholder="Enter Password" name="password" required>
-                <div class="text-end mb-2"><a href="forgotPass.html">Forgot password?</a></div>
+                <!-- <div class="text-end mb-2"><a href="forgotPass.html">Forgot password?</a></div> -->
         
+                <div class="pt-4 g-recaptcha" data-sitekey="6LfY-oYqAAAAAPPzEraWObmaAAcDZfZjqi85rFLR"></div>
                 <button class="mt-4 btn btn-secondary" type="submit">Login</button>
             </div>
         </form>
@@ -56,4 +67,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 </html>
 
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
