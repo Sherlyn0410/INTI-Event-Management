@@ -1,3 +1,53 @@
+async function fetchNotifications() {
+    try {
+        const response = await fetch('fetchNotification.php'); // Replace with your endpoint
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        return { notifications: [], unseen: false };
+    }
+}
+
+function updateNotificationIcon(notifications, unseen) {
+    const notificationIcon = document.querySelector('.material-symbols-outlined');
+    if (notifications.length > 0) {
+        notificationIcon.classList.add('has-notifications'); // Add a class to indicate there are notifications
+    } else {
+        notificationIcon.classList.remove('has-notifications');
+    }
+
+    if (unseen) {
+        notificationIcon.classList.add('unseen-notifications'); // Add a class to indicate there are unseen notifications
+    } else {
+        notificationIcon.classList.remove('unseen-notifications');
+    }
+}
+
+function generateNotificationHTML(notifications) {
+    if (notifications.length === 0) {
+        return '<div class="px-3 py-2 d-flex bg-light">No new notifications</div>';
+    }
+
+    return notifications.map(notification => `
+        <div class="px-3 py-2 d-flex bg-light">
+            <span class="material-symbols-outlined">${notification.icon}</span>
+            <span>${notification.message}</span>
+        </div>
+    `).join('');
+}
+
+function updateNotificationDropdown(notifications) {
+    const notificationDropdown = document.querySelector('.dropdown-menu-noti');
+    notificationDropdown.innerHTML = `
+        <div>
+            <h6 class="px-3">Notifications</h6>
+            <hr class="m-0">
+            ${generateNotificationHTML(notifications)}
+        </div>
+    `;
+}
+
 function loadNavbar(activePage) {
     const pages = {
         home: 'index.php',
@@ -85,7 +135,7 @@ function loadNavbar(activePage) {
                     <li><a class="dropdown-item" href="${pages.tickets}">Ticket</a></li>
                     <li><a class="dropdown-item" href="${pages.profile}">Profile</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" id="logoutButton">Log out</a></li>
+                    <li><a class="dropdown-item" href="#" id="logoutButton">Log out</a></li>
                     </ul>
                 </li>
                 </ul>
@@ -107,7 +157,7 @@ function loadFooter() {
     document.body.insertAdjacentHTML('beforeend', footerHTML);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     // Add event listener for the logout button
     const logoutButton = document.getElementById('logoutButton');
     if (logoutButton) {
@@ -167,6 +217,40 @@ document.addEventListener('DOMContentLoaded', function() {
         startDateInput.setAttribute('min', tomorrow);
     }
 
+    // Fetch and update notifications on page load
+    const { notifications, unseen } = await fetchNotifications();
+    updateNotificationIcon(notifications, unseen);
+    updateNotificationDropdown(notifications);
+
+    // Mark notifications as seen when the dropdown is opened
+    const notificationIcon = document.querySelector('.material-symbols-outlined');
+    notificationIcon.addEventListener('click', () => {
+        fetch('markNotificationsSeen.php'); // Endpoint to mark notifications as seen
+        notificationIcon.classList.remove('unseen-notifications');
+    });
+
     // Load footer
     loadFooter();
 });
+
+// CSS to indicate notifications
+const style = document.createElement('style');
+style.innerHTML = `
+  .material-symbols-outlined.has-notifications::after {
+    content: '•';
+    color: red;
+    font-size: 1.5em;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+  .material-symbols-outlined.unseen-notifications::before {
+    content: '•';
+    color: red;
+    font-size: 1.5em;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+`;
+document.head.appendChild(style);

@@ -19,13 +19,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $user_id = $_POST['user_id'];
         $password = $_POST['password'];
-        $hash = password_hash($password, PASSWORD_DEFAULT);
 
         if ($database->authenticate($user_id, $password)) {
             header("Location: index.php");
-            exit();
+            exit;
         } else {
-            $error = "Invalid username or password.";
+            $error = "Invalid Student ID or Password.";
+            error_log("Authentication failed for user ID: $user_id");
         }
     }
 }
@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
                 <label for="password"><b>Password</b></label>
                 <input type="password" class="form-control mb-0" placeholder="Enter Password" name="password" required>
-                <!-- <div class="text-end mb-2"><a href="forgotPass.html">Forgot password?</a></div> -->
+                <div class="text-end mb-2"><a href="forgotPass.php">Forgot password?</a></div>
         
                 <div class="pt-4 g-recaptcha" data-sitekey="6LfY-oYqAAAAAPPzEraWObmaAAcDZfZjqi85rFLR"></div>
                 <button class="mt-4 btn btn-secondary" type="submit">Login</button>
