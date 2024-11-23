@@ -142,10 +142,8 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endforeach; ?>
             <?php if (!$pendingFound): ?>
               <div class="card">
-                <div class="row card-body">
-                  <div class="col card-text">
-                    <div class="text-body-secondary text-center"><i class="material-symbols-outlined d-block mb-2">confirmation_number</i>No pending tickets found</div>
-                  </div>
+                <div class="card-body">
+                  <div class="text-body-secondary text-center"><i class="material-symbols-outlined d-block mb-2">confirmation_number</i>No pending tickets found</div>
                 </div>
               </div>
             <?php endif; ?>
