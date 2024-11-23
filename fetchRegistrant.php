@@ -38,18 +38,19 @@ $registrants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if (empty($registrants)) {
     echo "<p>No registrations found.</p>";
 } else {
-    echo "<table class='table'>
-            <thead>
-                <tr>
-                    <th class='bg-light'>User</th>
-                    <th class='bg-light'>Email</th>
-                    <th class='bg-light'>Campus</th>";
+    echo "<div class='table-responsive'>
+            <table class='table'>
+                <thead>
+                    <tr>
+                        <th class='bg-light'>User</th>
+                        <th class='bg-light'>Email</th>
+                        <th class='bg-light'>Campus</th>";
     if ($event_status !== 'completed') {
         echo "<th class='bg-light'>Action</th>";
     }
     echo "</tr>
-            </thead>
-            <tbody>";
+                </thead>
+                <tbody>";
     foreach ($registrants as $registrant) {
         // Skip non-approved registrants if the event is completed
         if ($event_status === 'completed' && $registrant['status'] !== 'approved') {
@@ -65,7 +66,7 @@ if (empty($registrants)) {
             if ($registrant['status'] == 'pending') {
                 echo "<form method='POST' action='approveRegistration.php'>
                         <input type='hidden' name='purchase_id' value='" . $registrant['id'] . "'>
-                        <button type='submit' name='action' value='approve' class='btn btn-success me-2'>Approve</button>
+                        <button type='submit' name='action' value='approve' class='btn btn-success mb-1 mb-md-0 me-md-2'>Approve</button>
                         <button type='submit' name='action' value='reject' class='btn btn-danger'>Reject</button>
                       </form>";
             } elseif ($registrant['status'] == 'approved') {
@@ -78,6 +79,6 @@ if (empty($registrants)) {
         }
         echo "</tr>";
     }
-    echo "</tbody></table>";
+    echo "</tbody></table></div>";
 }
 ?>

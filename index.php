@@ -1,5 +1,6 @@
 <?php
 include 'checkLogin.php';
+
 require_once 'config/database.php';
 require_once 'objects/event.php';
 require_once 'objects/ticket.php';
@@ -38,7 +39,7 @@ $randomEvents = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="carousel-inner">
           <?php foreach ($latestEvents as $index => $event): ?>
             <div class="carousel-item <?php echo $index === 0 ? 'active' : ''; ?>">
-              <img src="img/<?php echo htmlspecialchars($event['image']); ?>" class="w-100" alt="<?php echo htmlspecialchars($event['name']); ?>">
+              <img src="img/<?php echo htmlspecialchars($event['image']); ?>" class="img-fluid img-md-height" alt="<?php echo htmlspecialchars($event['name']); ?>">
             </div>
           <?php endforeach; ?>
         </div>
