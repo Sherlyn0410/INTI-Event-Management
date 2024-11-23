@@ -55,29 +55,35 @@ $randomEvents = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <div class="container-fluid pt-4">
         <h3>Upcoming Events</h3>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-          <?php foreach ($randomEvents as $event): ?>
-          <div class="event col">
-            <a href="eventListing.php?search=<?php echo urlencode($event['name']); ?>&campus=<?php echo urlencode($event['campus_id']); ?>" class="text-decoration-none">
-              <div class="card">
-                <img src="img/<?php echo htmlspecialchars($event['image']); ?>" alt="eventImage" class="card-img-top">
-                <section>
-                  <div class="card-body">
-                    <h5 class="card-title"><?php echo htmlspecialchars($event['name']); ?></h5>
-                    <p class="card-text">
-                      <small><?php echo date('D, d M Y • h.i A', strtotime($event['startdatetime'])); ?><br>
-                        <span class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></span></small>
-                    </p>
-                    <?php
-                    // Get the count of sold tickets for the event
-                    $soldTickets = $ticket->countSoldTickets($event['id']);
-                    ?>
-                    <span class="d-flex"><small class="material-symbols-outlined me-1">person</small><?php echo htmlspecialchars($soldTickets); ?> registered</span>
+          <?php if (empty($randomEvents)): ?>
+            <div>
+              <div class="py-4">No events found.</div>
+            </div>
+          <?php else: ?>
+            <?php foreach ($randomEvents as $event): ?>
+              <div class="event col">
+                <a href="eventListing.php?search=<?php echo urlencode($event['name']); ?>&campus=<?php echo urlencode($event['campus_id']); ?>" class="text-decoration-none">
+                  <div class="card">
+                    <img src="img/<?php echo htmlspecialchars($event['image']); ?>" alt="eventImage" class="card-img-top">
+                    <section>
+                      <div class="card-body">
+                        <h5 class="card-title"><?php echo htmlspecialchars($event['name']); ?></h5>
+                        <p class="card-text">
+                          <small><?php echo date('D, d M Y • h.i A', strtotime($event['startdatetime'])); ?><br>
+                            <span class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></span></small>
+                        </p>
+                        <?php
+                        // Get the count of sold tickets for the event
+                        $soldTickets = $ticket->countSoldTickets($event['id']);
+                        ?>
+                        <span class="d-flex"><small class="material-symbols-outlined me-1">person</small><?php echo htmlspecialchars($soldTickets); ?> registered</span>
+                      </div>
+                    </section>
                   </div>
-                </section>
+                </a>
               </div>
-            </a>
-          </div>
-          <?php endforeach; ?>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </div>
       </div>
     </div>

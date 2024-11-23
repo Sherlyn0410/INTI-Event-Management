@@ -35,45 +35,28 @@ if ($event->name == null) {
     exit();
 }
 
-// make sure data is not empty
-if (
-    !empty($data->name) &&
-    !empty($data->image) &&
-    !empty($data->description) &&
-    !empty($data->startdatetime) &&
-    !empty($data->endtime) &&
-    !empty($data->campus_id) &&
-    !empty($data->capacity)
-) {
-    // set event property values
-    $event->name = $data->name;
-    $event->image = $data->image;
-    $event->description = $data->description;
-    $event->startdatetime = $data->startdatetime;
-    $event->endtime = $data->endtime;
-    $event->campus_id = $data->campus_id;
-    $event->capacity = $data->capacity;
-    $event->status = "Published"; // Explicitly set status to "Published"
+// set event property values
+$event->name = $data->name;
+$event->description = $data->description;
+$event->startdatetime = $data->startdatetime;
+$event->endtime = $data->endtime;
+$event->campus_id = $data->campus_id;
+$event->capacity = $data->capacity;
+$event->user_id = $data->user_id;
+$event->image = $data->image;
 
-    // update the event
-    if ($event->update()) {
-        // set response code - 200 ok
-        http_response_code(200);
-
-        // tell the user
-        echo json_encode(array("message" => "Event was updated."));
-    } else {
-        // set response code - 503 service unavailable
-        http_response_code(503);
-
-        // tell the user
-        echo json_encode(array("message" => "Unable to update event."));
-    }
-} else {
-    // set response code - 400 bad request
-    http_response_code(400);
+// update the event
+if ($event->update()) {
+    // set response code - 200 ok
+    http_response_code(200);
 
     // tell the user
-    echo json_encode(array("message" => "Unable to update event. Data is incomplete."));
+    echo json_encode(array("message" => "Event was updated."));
+} else {
+    // set response code - 503 service unavailable
+    http_response_code(503);
+
+    // tell the user
+    echo json_encode(array("message" => "Unable to update event."));
 }
 ?>

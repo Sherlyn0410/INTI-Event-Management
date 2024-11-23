@@ -28,21 +28,11 @@ if(
     !empty($data->endtime) &&
     !empty($data->campus_id) &&
     !empty($data->capacity) &&
-    !empty($_FILES['image']['name'])
+    !empty($data->user_id) &&
+    !empty($data->image)
 ){
     // Handle image upload
-    $event->image = $_FILES['image']['name'];
-    $tmp = explode('.', $event->image);
-    $newFileName = round(microtime(true)) . '.' . end($tmp);
-    $uploadPath = '../img/' . $newFileName;
-    if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadPath)) {
-        $event->image = $newFileName;
-    } else {
-        // set response code - 503 service unavailable
-        http_response_code(503);
-        echo json_encode(array("message" => "Unable to upload image."));
-        exit();
-    }
+
 
     // set event property values
     $event->name = $data->name;
@@ -51,7 +41,9 @@ if(
     $event->endtime = $data->endtime;
     $event->campus_id = $data->campus_id;
     $event->capacity = $data->capacity;
-    $event->status = "Published"; // Set status to published
+    $event->status = "published"; 
+    $event->user_id = $data->user_id;
+    $event->image = $data->image;   
   
     // create the event
     if($event->create()){

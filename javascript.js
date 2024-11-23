@@ -1,53 +1,3 @@
-async function fetchNotifications() {
-    try {
-        const response = await fetch('fetchNotification.php'); // Replace with your endpoint
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching notifications:', error);
-        return { notifications: [], unseen: false };
-    }
-}
-
-function updateNotificationIcon(notifications, unseen) {
-    const notificationIcon = document.querySelector('.material-symbols-outlined');
-    if (notifications.length > 0) {
-        notificationIcon.classList.add('has-notifications'); // Add a class to indicate there are notifications
-    } else {
-        notificationIcon.classList.remove('has-notifications');
-    }
-
-    if (unseen) {
-        notificationIcon.classList.add('unseen-notifications'); // Add a class to indicate there are unseen notifications
-    } else {
-        notificationIcon.classList.remove('unseen-notifications');
-    }
-}
-
-function generateNotificationHTML(notifications) {
-    if (notifications.length === 0) {
-        return '<div class="px-3 py-2 d-flex bg-light">No new notifications</div>';
-    }
-
-    return notifications.map(notification => `
-        <div class="px-3 py-2 d-flex bg-light">
-            <span class="material-symbols-outlined">${notification.icon}</span>
-            <span>${notification.message}</span>
-        </div>
-    `).join('');
-}
-
-function updateNotificationDropdown(notifications) {
-    const notificationDropdown = document.querySelector('.dropdown-menu-noti');
-    notificationDropdown.innerHTML = `
-        <div>
-            <h6 class="px-3">Notifications</h6>
-            <hr class="m-0">
-            ${generateNotificationHTML(notifications)}
-        </div>
-    `;
-}
-
 function loadNavbar(activePage) {
     const pages = {
         home: 'index.php',
@@ -68,26 +18,12 @@ function loadNavbar(activePage) {
       <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container-fluid">
           <a class="navbar-brand" href="${pages.home}">
-            <img src="/INTIEventManagement/img/INTIlogo.png" width="206" height="44" class="d-none d-md-inline-block align-text-top" alt="INTILogo">
-            <img src="/INTIEventManagement/img/INTImobilelogo.png" width="60" height="50" class="d-md-none d-inline-block align-text-top" alt="INTILogo">
+            <img src="/INTIEventManagement/img/INTIlogo.png" width="206" height="44" class="d-inline-block align-text-top" alt="INTILogo">
           </a>
-          <div class="d-lg-none d-flex align-items-center">
-            <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">notifications</i></span>
-            <ul class="dropdown-menu dropdown-menu-end">
-                <li>
-                <div>
-                    <h6 class="px-3">Notifications</h6>
-                    <hr class="m-0">
-                    <div class="px-3 py-2 d-flex bg-light">
-                    <span class="material-symbols-outlined">campaign</span>
-                    <span>Update: The date for antidrug campaign have changed to 28 Oct 2024</span>
-                    </div>
-                </div>
-                </li>
-            </ul>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
+          <div class="d-lg-none">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
           </div>
           <div class="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
             <div>
@@ -108,21 +44,6 @@ function loadNavbar(activePage) {
             </div>
             <div>
                 <ul class="navbar-nav">
-                <li class="nav-item dropdown d-none d-lg-block"">
-                    <a class="nav-link d-flex align-items-center" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="material-symbols-outlined">notifications</i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-noti" aria-labelledby="navbarDropdownMenuLink">
-                    <div>
-                        <h6 class="px-3">Notifications</h6>
-                        <hr class="m-0">
-                        <div class="px-3 py-2 d-flex bg-light">
-                        <span class="material-symbols-outlined">campaign</span>
-                        <span>Update: The date for antidrug campaign have changed to 28 Oct 2024</span>
-                        </div>
-                    </div>
-                    </ul>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link ${isActive('profile')}" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <div class="d-flex align-items-center">
@@ -217,40 +138,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         startDateInput.setAttribute('min', tomorrow);
     }
 
-    // Fetch and update notifications on page load
-    const { notifications, unseen } = await fetchNotifications();
-    updateNotificationIcon(notifications, unseen);
-    updateNotificationDropdown(notifications);
-
-    // Mark notifications as seen when the dropdown is opened
-    const notificationIcon = document.querySelector('.material-symbols-outlined');
-    notificationIcon.addEventListener('click', () => {
-        fetch('markNotificationsSeen.php'); // Endpoint to mark notifications as seen
-        notificationIcon.classList.remove('unseen-notifications');
-    });
-
     // Load footer
     loadFooter();
 });
-
-// CSS to indicate notifications
-const style = document.createElement('style');
-style.innerHTML = `
-  .material-symbols-outlined.has-notifications::after {
-    content: '•';
-    color: red;
-    font-size: 1.5em;
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-  .material-symbols-outlined.unseen-notifications::before {
-    content: '•';
-    color: red;
-    font-size: 1.5em;
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-`;
-document.head.appendChild(style);

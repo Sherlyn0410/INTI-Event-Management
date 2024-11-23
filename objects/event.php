@@ -198,21 +198,23 @@ class Event{
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
     
         // set values to object properties
-        $this->name = $row['name'];
-        $this->image = $row['image'];
-        $this->description = $row['description'];
-        $this->startdatetime = $row['startdatetime'];
-        $this->endtime = $row['endtime'];
-        $this->campus_id = $row['campus_id'];
-        $this->campus_name = $row['campus_name'];
-        $this->capacity = $row['capacity'];
-        $this->status = $row['status'];
-        $this->user_id = $row['user_id'];
-        $this->user_name = $row['user_name'];
+        if ($row) {
+            $this->name = $row['name'];
+            $this->description = $row['description'];
+            $this->startdatetime = $row['startdatetime'];
+            $this->endtime = $row['endtime'];
+            $this->campus_id = $row['campus_id'];
+            $this->campus_name = $row['campus_name'];
+            $this->capacity = $row['capacity'];
+            $this->status = $row['status'];
+            $this->user_id = $row['user_id'];
+            $this->user_name = $row['user_name'];
+            $this->image = $row['image'];
+        }
     }
 
     // update the event
-    function update($ticket) {
+    function updateTicket($ticket) {
         // Check the number of sold tickets
         $soldTickets = $ticket->countSoldTickets($this->id);
 
@@ -268,6 +270,47 @@ class Event{
         if ($stmt->execute()) {
             // Update tickets based on the new capacity
             $ticket->generateTickets($this->id, $this->capacity);
+            return true;
+        }
+
+        return false;
+    }
+
+    // update the event
+    function update() {
+        // update query
+        $query = "UPDATE " . $this->table_name . " 
+                  SET name = :name, description = :description, startdatetime = :startdatetime, endtime = :endtime, campus_id = :campus_id, capacity = :capacity, user_id = :user_id, image = :image, status = :status
+                  WHERE id = :id";
+
+        // prepare query statement
+        $stmt = $this->conn->prepare($query);
+
+        // sanitize
+        $this->name = htmlspecialchars(strip_tags($this->name));
+        $this->description = htmlspecialchars(strip_tags($this->description));
+        $this->startdatetime = htmlspecialchars(strip_tags($this->startdatetime));
+        $this->endtime = htmlspecialchars(strip_tags($this->endtime));
+        $this->campus_id = htmlspecialchars(strip_tags($this->campus_id));
+        $this->capacity = htmlspecialchars(strip_tags($this->capacity));
+        $this->user_id = htmlspecialchars(strip_tags($this->user_id));
+        $this->image = htmlspecialchars(strip_tags($this->image));
+        $this->status = htmlspecialchars(strip_tags($this->status));
+        $this->id = htmlspecialchars(strip_tags($this->id));
+
+        // bind new values
+        $stmt->bindParam(':name', $this->name);
+        $stmt->bindParam(':description', $this->description);
+        $stmt->bindParam(':startdatetime', $this->startdatetime);
+        $stmt->bindParam(':endtime', $this->endtime);
+        $stmt->bindParam(':campus_id', $this->campus_id);
+        $stmt->bindParam(':capacity', $this->capacity);
+        $stmt->bindParam(':user_id', $this->user_id);
+        $stmt->bindParam(':image', $this->image);
+        $stmt->bindParam(':status', $this->status);
+        $stmt->bindParam(':id', $this->id);
+
+        if($stmt->execute()){
             return true;
         }
 

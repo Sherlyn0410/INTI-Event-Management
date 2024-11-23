@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Create or update the event
     if ($isEdit) {
-        if ($event->update($ticket)) {
+        if ($event->updateTicket($ticket)) {
             echo "<script>
                 alert('Event was successfully updated. The changes will notify the registrants.');
                 window.location.href = 'manageEvent.php';
