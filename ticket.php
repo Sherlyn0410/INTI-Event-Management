@@ -62,7 +62,8 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                       <div>
                         <h5 class="card-title"><?php echo htmlspecialchars($purchase['event_name']); ?></h5>
                         <p class="card-text"><?php echo htmlspecialchars($purchase['campus_name']); ?></p>
-                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?></p>
+                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?> - 
+                        <?php echo date('g:i A', strtotime($purchase['endtime'])); ?></p>
                       </div>
                     </div>
                   </div>
@@ -90,13 +91,14 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                       <strong class="text-uppercase"><?php echo date('M', strtotime($purchase['startdatetime'])); ?><br><?php echo date('d', strtotime($purchase['startdatetime'])); ?></strong>
                     </div>
                     <div class="col-md-3">
-                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded" alt="eventImage">
+                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded my-2 my-md-0" alt="eventImage">
                     </div>
                     <div class="col-md-8">
                       <div>
                         <h5 class="card-title"><?php echo htmlspecialchars($purchase['event_name']); ?></h5>
                         <p class="card-text"><?php echo htmlspecialchars($purchase['campus_name']); ?></p>
-                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?></p>
+                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?> - 
+                        <?php echo date('g:i A', strtotime($purchase['endtime'])); ?></p>
                       </div>
                     </div>
                   </div>
@@ -130,7 +132,8 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                       <div>
                         <h5 class="card-title"><?php echo htmlspecialchars($purchase['event_name']); ?></h5>
                         <p class="card-text"><?php echo htmlspecialchars($purchase['campus_name']); ?></p>
-                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?></p>
+                        <p class="card-text"><?php echo date('l, F j, Y \a\t g:i A', strtotime($purchase['startdatetime'])); ?> - 
+                        <?php echo date('g:i A', strtotime($purchase['endtime'])); ?></p>
                       </div>
                     </div>
                   </div>

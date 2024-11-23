@@ -2,10 +2,12 @@
 include 'checkLogin.php';
 require_once 'config/database.php';
 require_once 'objects/event.php';
+require_once 'objects/ticket.php';
 
 $database = new Database();
 $db = $database->getConnection();
 $event = new Event($db);
+$ticket = new Ticket($db);
 
 // Get search parameters
 $searchKeyword = isset($_GET['search']) ? $_GET['search'] : '';
@@ -73,6 +75,11 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <small><?php echo date('D, d M Y • h.i A', strtotime($event['startdatetime'])); ?><br>
                               <span class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></span></small>
                           </p>
+                          <?php
+                            // Get the count of sold tickets for the event
+                            $soldTickets = $ticket->countSoldTickets($event['id']);
+                          ?>
+                          <span class="d-flex"><small class="material-symbols-outlined me-1">person</small><?php echo htmlspecialchars($soldTickets); ?> registered</span>
                       </div>
                     </section>
                 </div>

@@ -15,7 +15,7 @@ class Purchase {
 
     // Fetch purchases by user ID
     public function readByUser($user_id) {
-        $query = "SELECT p.id, p.user_id, p.ticket_id, p.purchaseDateTime, p.status, t.event_id, e.name as event_name, e.image as event_image, e.startdatetime, e.campus_id, c.name as campus_name
+        $query = "SELECT p.id, p.user_id, p.ticket_id, p.purchaseDateTime, p.status, t.event_id, e.name as event_name, e.image as event_image, e.startdatetime, e.endtime, e.campus_id, c.name as campus_name
                   FROM " . $this->table_name . " p
                   LEFT JOIN ticket t ON p.ticket_id = t.id
                   LEFT JOIN event e ON t.event_id = e.id

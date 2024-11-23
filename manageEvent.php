@@ -53,52 +53,105 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php if (empty($events)): ?>
                 <div class="py-4">No events found.</div>
             <?php else: ?>
-            <table class="table">
-                <thead class="table-dark">
-                    <tr class="text-start">
-                        <th scope="col" colspan="3">Event</th>
-                        <th scope="col">Registered</th>
-                        <th scope="col">Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                  <?php foreach ($events as $event): ?>
-                  <tr>
-                    <th scope="row" class="text-uppercase"><?php echo date('M', strtotime($event['startdatetime'])); ?><br><?php echo date('d', strtotime($event['startdatetime'])); ?></th>
-                    <td class="col-3"><img src="/INTIEventManagement/img/<?php echo htmlspecialchars($event['image']); ?>" class="img-fluid rounded" alt="EventImage"></td>
-                    <td>
-                        <strong><?php echo htmlspecialchars($event['name']); ?></strong><br>
-                        <div><small class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></small></div>
-                        <div><small class="text-muted"><?php echo date('l, F j, Y \a\t g:i A', strtotime($event['startdatetime'])); ?></small></div>
-                    </td>           
-                    <td><?php echo htmlspecialchars($ticket->countSoldTickets($event['id'])); ?>/<?php echo htmlspecialchars($event['capacity']); ?></td>
-                    <td class="<?php echo $event['status'] == 'published' ? 'text-success' : 'text-warning'; ?>"><?php echo htmlspecialchars(ucfirst($event['status'])); ?></td>
-                    <td>
-                        <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
-                        <ul class="dropdown-menu">
-                            <?php if ($event['status'] === 'completed'): ?>
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
-                            <?php else: ?>
-                                <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event details</a></li>
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
-                                <li>
-                                    <form method="POST" action="manageEvent.php" onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
-                                        <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
-                                        <button type="submit" name="delete_event" class="dropdown-item">Delete event</button>
-                                    </form>
-                                </li>
-                            <?php endif; ?>
-                        </ul>
-                    </td>
-                  </tr>
-                  <?php endforeach; ?>
-                </tbody>
-              </table>
-              <?php endif; ?>
-            </div>
+                <!-- Table for medium and larger screens -->
+                <table class="table d-none d-md-table">
+                    <thead class="table-dark">
+                        <tr class="text-start">
+                            <th scope="col" colspan="3">Event</th>
+                            <th scope="col">Registered</th>
+                            <th scope="col">Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($events as $event): ?>
+                        <tr>
+                            <th scope="row" class="text-uppercase"><?php echo date('M', strtotime($event['startdatetime'])); ?><br><?php echo date('d', strtotime($event['startdatetime'])); ?></th>
+                            <td class="col-3"><img src="/INTIEventManagement/img/<?php echo htmlspecialchars($event['image']); ?>" class="img-fluid rounded" alt="EventImage"></td>
+                            <td>
+                                <h5><?php echo htmlspecialchars($event['name']); ?></h5>
+                                <div class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></div>
+                                <div class="text-muted">
+                                    <?php echo date('l, F j, Y \a\t g:i A', strtotime($event['startdatetime'])); ?> - 
+                                    <?php echo date('g:i A', strtotime($event['endtime'])); ?>
+                                </div>
+                            </td>           
+                            <td><?php echo htmlspecialchars($ticket->countSoldTickets($event['id'])); ?>/<?php echo htmlspecialchars($event['capacity']); ?></td>
+                            <td class="<?php echo $event['status'] == 'published' ? 'text-success' : 'text-warning'; ?>"><?php echo htmlspecialchars(ucfirst($event['status'])); ?></td>
+                            <td>
+                                <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
+                                <ul class="dropdown-menu">
+                                    <?php if ($event['status'] === 'completed'): ?>
+                                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
+                                    <?php else: ?>
+                                        <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event details</a></li>
+                                        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
+                                        <li>
+                                            <form method="POST" action="manageEvent.php" onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
+                                                <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                                                <button type="submit" name="delete_event" class="dropdown-item">Delete event</button>
+                                            </form>
+                                        </li>
+                                    <?php endif; ?>
+                                </ul>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+
+                <!-- Table for smaller screens -->
+                <table class="table d-table d-md-none">
+                    <thead class="table-dark">
+                        <tr class="text-start">
+                            <th scope="col">Event</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($events as $event): ?>
+                        <tr>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <strong class="text-uppercase"><?php echo date('M', strtotime($event['startdatetime'])); ?> <?php echo date('d', strtotime($event['startdatetime'])); ?></strong>
+                                    <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($event['image']); ?>" class="img-fluid rounded my-2" alt="EventImage">
+                                    <h5><?php echo htmlspecialchars($event['name']); ?></h5>
+                                    <div class="text-muted"><?php echo htmlspecialchars($event['campus_name']); ?></div>
+                                    <div class="text-muted">
+                                        <?php echo date('l, F j, Y \a\t g:i A', strtotime($event['startdatetime'])); ?> - 
+                                        <?php echo date('g:i A', strtotime($event['endtime'])); ?>
+                                    </div>
+                                    <div class="d-flex"><small class="material-symbols-outlined me-1">person</small><?php echo htmlspecialchars($ticket->countSoldTickets($event['id'])); ?>/<?php echo htmlspecialchars($event['capacity']); ?></div>
+                                    <div class="<?php echo $event['status'] == 'published' ? 'text-success' : 'text-warning'; ?>"><?php echo htmlspecialchars(ucfirst($event['status'])); ?></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex flex-column">
+                                    <span role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="material-symbols-outlined">more_vert</i></span>
+                                    <ul class="dropdown-menu">
+                                        <?php if ($event['status'] === 'completed'): ?>
+                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
+                                        <?php else: ?>
+                                            <li><a class="dropdown-item" href="createEvent.php?id=<?php echo $event['id']; ?>">Edit event details</a></li>
+                                            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#manageRegistrantsModal" data-event-id="<?php echo $event['id']; ?>">Manage registrants</a></li>
+                                            <li>
+                                                <form method="POST" action="manageEvent.php" onsubmit="return confirm('Are you sure you want to delete this event?');" style="display:inline;">
+                                                    <input type="hidden" name="event_id" value="<?php echo $event['id']; ?>">
+                                                    <button type="submit" name="delete_event" class="dropdown-item">Delete event</button>
+                                                </form>
+                                            </li>
+                                        <?php endif; ?>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
         </div>
     </div>
+  </div>
 
   <!-- Modal -->
   <div class="modal fade" id="manageRegistrantsModal" tabindex="-1" aria-labelledby="manageRegistrantsModalLabel" aria-hidden="true">

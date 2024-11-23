@@ -132,7 +132,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <?php endif; ?>
         </div>
         <div class="pt-4 gap-md-3 d-md-flex justify-content-md-end">
-          <input class="col-12 col-md-2 mb-1 mb-md-0 btn btn-md btn-light border" type="button" value="Exit" id="exitButton">
+          <input class="col-12 col-md-2 mb-2 mb-md-0 btn btn-md btn-light border" type="button" value="Exit" id="exitButton">
           <input class="col-12 col-md-2 btn btn-md btn-secondary" type="submit" value="<?php echo $isEdit ? 'Update Event' : 'Create Event'; ?>">
         </div>  
       </form>
