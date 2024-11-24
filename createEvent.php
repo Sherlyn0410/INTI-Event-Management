@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $event->endtime = $_POST['startdate'] . ' ' . $_POST['endtime'];
     $event->campus_id = $_POST['campus_id'];
     $event->capacity = $_POST['capacity'];
-    $event->status = "Published";
+    $event->status = "published";
     $event->user_id = $_SESSION['user_id'];
 
     // Handle image upload
