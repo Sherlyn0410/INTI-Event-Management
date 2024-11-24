@@ -56,7 +56,7 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                       <strong class="text-uppercase"><?php echo date('M', strtotime($purchase['startdatetime'])); ?><br><?php echo date('d', strtotime($purchase['startdatetime'])); ?></strong>
                     </div>
                     <div class="col-md-3">
-                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded" alt="eventImage">
+                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded my-2 my-md-0" alt="eventImage">
                     </div>
                     <div class="col-md-8">
                       <div>
@@ -126,7 +126,7 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
                       <strong class="text-uppercase"><?php echo date('M', strtotime($purchase['startdatetime'])); ?><br><?php echo date('d', strtotime($purchase['startdatetime'])); ?></strong>
                     </div>
                     <div class="col-md-3">
-                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded" alt="eventImage">
+                      <img src="/INTIEventManagement/img/<?php echo htmlspecialchars($purchase['event_image']); ?>" class="img-fluid rounded my-2 my-md-0" alt="eventImage">
                     </div>
                     <div class="col-md-8">
                       <div>
