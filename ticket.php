@@ -21,7 +21,8 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>INTI Event Management</title>
@@ -35,13 +36,16 @@ $purchases = $stmt->fetchAll(PDO::FETCH_ASSOC);
       <div>
         <ul class="nav nav-underline" id="eventTicketTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <a class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming-tab-pane" type="button" role="tab" aria-controls="upcoming-tab-pane" aria-selected="true">Upcoming events</a>
+            <a class="nav-link active" id="upcoming-tab" data-bs-toggle="tab" data-bs-target="#upcoming-tab-pane" 
+            type="button" role="tab" aria-controls="upcoming-tab-pane" aria-selected="true">Upcoming events</a>
           </li>
           <li class="nav-item" role="presentation">
-            <a class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past-tab-pane" type="button" role="tab" aria-controls="past-tab-pane" aria-selected="false">Past events</a>
+            <a class="nav-link" id="past-tab" data-bs-toggle="tab" data-bs-target="#past-tab-pane" 
+            type="button" role="tab" aria-controls="past-tab-pane" aria-selected="false">Past events</a>
           </li>
           <li class="nav-item" role="presentation">
-            <a class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-tab-pane" type="button" role="tab" aria-controls="pending-tab-pane" aria-selected="false">Pending approval</a>
+            <a class="nav-link" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-tab-pane" 
+            type="button" role="tab" aria-controls="pending-tab-pane" aria-selected="false">Pending approval</a>
           </li>
         </ul>
         <div class="tab-content pt-4" id="eventTicketTabContent">
