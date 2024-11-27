@@ -35,7 +35,17 @@ $stmt->bindParam(1, $event_id);
 $stmt->execute();
 $registrants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if (empty($registrants)) {
+$hasRegistrants = false;
+foreach ($registrants as $registrant) {
+    // Skip non-approved registrants if the event is completed
+    if ($event_status === 'completed' && $registrant['status'] !== 'approved') {
+        continue;
+    }
+    $hasRegistrants = true;
+    break;
+}
+
+if (!$hasRegistrants) {
     echo "<p>No registrations found.</p>";
 } else {
     echo "<div class='table-responsive'>
